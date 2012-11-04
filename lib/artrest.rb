@@ -9,6 +9,7 @@ require 'artrest/repositories'
 require 'artrest/repository'
 require 'artrest/dir_entry'
 require 'artrest/builds'
+require 'artrest/build'
 
 module ArtRest
 

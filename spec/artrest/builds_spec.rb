@@ -16,6 +16,12 @@ describe ArtRest::Builds do
         actual_number_of_builds.should equal expected_number_of_builds
     end
     
+    it "should return all builds as an instance of ArtRest::Build" do
+        @artbuilds.each do |build_name, build|
+            build.should be_an_instance_of ArtRest::Build 
+        end
+    end
+    
     it "should expose the uri property" do
         @artbuilds.uri.should eq "#{ARTIFACTORY_URL}/api/build"
     end

@@ -28,7 +28,7 @@ module ArtRest
 
         def each
             content['buildsNumbers'].each do |build_hash|
-                yield [name, build_hash]
+                yield [build_hash['uri'][1..-1].to_i, build_hash]
             end
         end
     end

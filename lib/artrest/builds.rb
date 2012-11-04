@@ -17,7 +17,8 @@ module ArtRest
 
         def each
             content['builds'].each do |build_hash|
-                yield [build_hash['uri'], build_hash]
+                build_name = build_hash['uri'][1..-1]
+                yield [build_name, ArtRest::Build.new(build_name, @options)]
             end
         end
     end
