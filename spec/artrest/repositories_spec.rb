@@ -3,13 +3,12 @@ require File.expand_path("../../spec_helper", __FILE__)
 describe ArtRest::Repositories do
 
     before(:each) do
-        @options  = { :artifactory_url => ARTIFACTORY_URL, :artifactory_user => ARTIFACTORY_USER, :artifactory_password => ARTIFACTORY_PWD }
-        @artrepos = ArtRest::Repositories.new @options
-        @repos_hash = JSON.parse RestClient.get("#{ARTIFACTORY_URL}/api/repositories", {:user => ARTIFACTORY_USER, :password => ARTIFACTORY_PWD })
+        @artrepos = ArtRest::Repositories.new OPTIONS
+        register_stub_request('./repositories/repositories_response.txt', "api/repositories")
     end
 
     it "should iterate over all repositories" do
-        expected_number_of_repos = @repos_hash.size
+        expected_number_of_repos = 24
         actual_number_of_repos = 0
         @artrepos.each do |name, repo|
            actual_number_of_repos += 1 

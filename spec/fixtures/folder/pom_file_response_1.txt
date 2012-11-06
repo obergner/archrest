@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Server: Artifactory/2.4.2
+Content-Type: application/vnd.org.jfrog.artifactory.storage.FileInfo+json
+Transfer-Encoding: chunked
+Date: Tue, 06 Nov 2012 21:51:58 GMT
+
+{"uri":"http://dev.vhost.net:8081/artifactory/api/storage/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT//rpm-elasticsearch-1.0.0-20120411.155423-1.pom","metadataUri":"http://dev.vhost.net:8081/artifactory/api/storage/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT//rpm-elasticsearch-1.0.0-20120411.155423-1.pom?mdns","repo":"ext-snapshot-local","path":"/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT/rpm-elasticsearch-1.0.0-20120411.155423-1.pom","created":"2012-04-11T17:54:43.997+02:00","createdBy":"admin","lastModified":"2012-04-11T17:54:43.954+02:00","modifiedBy":"admin","lastUpdated":"2012-04-11T17:54:44.044+02:00","downloadUri":"http://dev.vhost.net:8081/artifactory/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT//rpm-elasticsearch-1.0.0-20120411.155423-1.pom","mimeType":"application/x-maven-pom+xml","size":3852,"checksums":{"sha1":"b1d68353af20aeb0d4b23163fb210baabb20d382","md5":"1ba2b460d1b51de16a647444b16ec4a6"},"originalChecksums":{"sha1":"b1d68353af20aeb0d4b23163fb210baabb20d382","md5":"1ba2b460d1b51de16a647444b16ec4a6"}}
