@@ -10,18 +10,19 @@ Gem::Specification.new do |gem|
   gem.email         = ["olaf.bergner@gmx.de"]
   gem.description   = %q{ArtRest: A Ruby REST client for Artifactory}
   gem.summary       = %q{ArtRest is a commandline client for the Artifactory REST API}
-  gem.homepage      = ""
+  gem.homepage      = "http://github.com/obergner/artrest"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_runtime_dependency     'rest-client'
-  gem.add_runtime_dependency     'json'
-  gem.add_runtime_dependency     'active_support'
+  gem.add_runtime_dependency     'rest-client', '1.6.7'
+  gem.add_runtime_dependency     'json', '1.7.5'
+  gem.add_runtime_dependency     'activesupport', '3.0.0'
+  gem.add_runtime_dependency     'gli', '2.4.1'
   
-  gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'rspec'
-  gem.add_development_dependency 'webmock'
+  gem.add_development_dependency 'rake', '0.9.2.2'
+  gem.add_development_dependency 'rspec', '2.11.0'
+  gem.add_development_dependency 'webmock', '1.9.0'
 end

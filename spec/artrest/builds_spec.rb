@@ -7,6 +7,12 @@ describe ArtRest::Builds do
         register_stub_request('./builds/build_api_response_correct.txt', "api/build")
     end
 
+    it "should expose a shortcut method to retrieve all builds" do
+        all_builds = ArtRest::Builds.get OPTIONS
+        all_builds.should_not be_nil
+        all_builds.should be_an_instance_of ArtRest::Builds
+    end
+    
     it "should iterate over all builds" do
         expected_number_of_builds = 64
         actual_number_of_builds = 0

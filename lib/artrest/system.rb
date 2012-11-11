@@ -3,6 +3,10 @@ module ArtRest
     class System
         include ArtRest::ResourceMixin
 
+        def self.info options
+            System.new(options).to_s
+        end
+
         def initialize options
             check_options options
             @options = options

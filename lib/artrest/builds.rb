@@ -5,6 +5,10 @@ module ArtRest
         include Enumerable
         include ArtRest::ResourceMixin
 
+        def self.get options
+            Builds.new options
+        end
+
         def initialize options
             check_options options
             @options = options

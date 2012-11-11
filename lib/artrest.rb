@@ -13,4 +13,11 @@ require 'artrest/build'
 
 module ArtRest
 
+    def self.system_info options
+        System.info options
+    end
+
+    def self.all_builds options
+        Builds.get options
+    end
 end
