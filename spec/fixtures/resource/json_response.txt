@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Server: Artifactory/2.4.2
+Content-Type: application/vnd.org.jfrog.artifactory.storage.FolderInfo+json
+Transfer-Encoding: chunked
+Date: Sun, 04 Nov 2012 21:54:47 GMT
+
+{"uri":"http://dev.vhost.net:8081/artifactory/api/storage/libs-snapshot-local","metadataUri":"http://dev.vhost.net:8081/artifactory/api/storage/libs-snapshot-local?mdns","repo":"libs-snapshot-local","path":"/","created":"2011-12-15T00:35:15.064+01:00","createdBy":"_system_","lastModified":"2011-12-15T00:35:15.065+01:00","modifiedBy":"_system_","lastUpdated":"2011-12-15T00:35:15.065+01:00","children":[{"uri":"/vnet","folder":true}]}

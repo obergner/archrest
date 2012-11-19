@@ -1,20 +1,26 @@
 module ArtRest
 
-    class System
-        include ArtRest::ResourceMixin
+    class System < ArtRest::Resource
 
-        def self.info options
-            System.new(options).to_s
+        self.mime_type = MIME::Types['text/plain']
+
+        class << self
+
+            public
+
+            def info host, options
+                System.new("#{host}/api/system", options).content
+            end
+
+            protected
+
+            def matches_path path
+                path =~ %r|^/api/system/?$|
+            end
         end
 
-        def initialize options
-            check_options options
-            @options = options
-            @delegate = RestClient::Resource.new "#{url}/api/system", user, password
-        end
-
-        def to_s
-            content
+        def initialize url, options, &block
+            super url, options, &block
         end
     end
 end

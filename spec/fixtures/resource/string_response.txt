@@ -1,0 +1,188 @@
+HTTP/1.1 200 OK
+Server: Artifactory/2.4.2
+Content-Type: text/plain
+Transfer-Encoding: chunked
+Date: Sun, 04 Nov 2012 21:49:06 GMT
+
+
+
+ SYSTEM INFORMATION DUMP
+ =======================
+
+ User Info
+ ========================
+   user.country                                                          | US
+   user.dir                                                              | /var/lib/artifactory
+   user.home                                                             | /var/lib/artifactory
+   user.language                                                         | en
+   user.name                                                             | artifactory
+   user.timezone                                                         | Europe/Berlin
+
+ Host Info
+ ========================
+   Available Processors                                                  | 1
+   Heap Memory Usage-Commited                                            | 1033502720
+   Heap Memory Usage-Init                                                | 1073741824
+   Heap Memory Usage-Max                                                 | 1033502720
+   Heap Memory Usage-Used                                                | 305610208
+   Non-Heap Memory Usage-Commited                                        | 140705792
+   Non-Heap Memory Usage-Init                                            | 136773632
+   Non-Heap Memory Usage-Max                                             | 184549376
+   Non-Heap Memory Usage-Used                                            | 74602800
+   os.arch                                                               | amd64
+   os.name                                                               | Linux
+   os.version                                                            | 2.6.32-279.11.1.el6.x86_64
+
+ Artifactory Info
+ ========================
+   artifactory.runMode.test                                              | false
+   artifactory.runMode.qa                                                | false
+   artifactory.runMode.dev                                               | false
+   artifactory.version                                                   | 2.4.2
+   artifactory.revision                                                  | 13059
+   artifactory.addons.disabled                                           | 
+   artifactory.addons.info.url                                           | http
+                                                                         | //service.jfrog.org/artifactory/addons/info/%s
+   artifactory.jcr.configDir                                             | repo/filesystem-mysql
+   artifactory.jcr.fixConsistency                                        | false
+   artifactory.jcr.autoRemoveMissingBinaries                             | false
+   artifactory.jcr.corePoolSize                                          | 6
+   artifactory.versioningQueryIntervalSecs                               | 720
+   artifactory.logs.viewRefreshRateSecs                                  | 10
+   artifactory.locks.timeoutSecs                                         | 120
+   artifactory.locks.debugTimeouts                                       | false
+   artifactory.task.completionLockTimeoutRetries                         | 100
+   artifactory.repo.cleanup.intervalHours                                | 21
+   artifactory.repo.concurrentDownloadSyncTimeoutSecs                    | 900
+   artifactory.fsitem.cache.idleTimeSecs                                 | 1200
+   artifactory.search.maxResults                                         | 500
+   artifactory.search.userQueryLimit                                     | 1000
+   artifactory.search.content.maxFragments                               | 500
+   artifactory.search.content.maxFragmentsSize                           | 5000
+   artifactory.search.archive.minQueryLength                             | 3
+   artifactory.search.content.forceArchiveIndexing                       | false
+   artifactory.search.pattern.timeoutSecs                                | 30
+   artifactory.search.xmlIndexing                                        | false
+   artifactory.search.artifactSearch.useV2Storage                        | true
+   artifactory.gc.useIndex                                               | false
+   artifactory.gc.intervalSecs                                           | 86400
+   artifactory.gc.delaySecs                                              | 7200
+   artifactory.gc.sleepBetweenNodesMillis                                | 20
+   artifactory.gc.scanStartSleepingThresholdMillis                       | 20000
+   artifactory.gc.scanSleepBetweenIterationsMillis                       | 200
+   artifactory.gc.fileScanSleepIterationMillis                           | 1000
+   artifactory.gc.fileScanSleepMillis                                    | 250
+   artifactory.gc.useV1                                                  | false
+   artifactory.gc.maxCacheEntries                                        | 10000
+   artifactory.traffic.collectionActive                                  | false
+   artifactory.traffic.collectionIntervalSecs                            | 60
+   artifactory.traffic.trafficEntriesRetentionSecs                       | 7200
+   artifactory.security.authentication.cache.idleTimeSecs                | 300
+   artifactory.security.userLastAccessUpdatesResolutionSecs              | 60
+   artifactory.security.authentication.encryptedPassword.surroundChars   | {}
+   artifactory.mvn.central.hostPattern                                   | .maven.org
+   artifactory.mvn.central.indexerMaxQueryIntervalSecs                   | 86400
+   artifactory.mvn.dynamicMetadata.cacheRetentionSecs                    | 10
+   artifactory.mvn.metadata.version3.enabled                             | true
+   artifactory.build.maxFoldersToScanForDeletionWarnings                 | 2
+   artifactory.build.checksum.cache.idleTimeSecs                         | 300
+   artifactory.updates.refreshIntervalSecs                               | 14400
+   artifactory.updates.url                                               | http
+                                                                         | //service.jfrog.org/artifactory/updates
+   artifactory.artifactoryRequestsToGlobalCanRetrieveRemoteArtifacts     | false
+   artifactory.ui.syntaxColoringMaxTextSizeBytes                         | 512000
+   artifactory.plugin.scripts.refreshIntervalSecs                        | 2147483647
+   artifactory.file.roller.maxFileToRetain                               | 10
+   artifactory.backup.fileExportSleepIterationMillis                     | 2000
+   artifactory.backup.fileExportSleepMillis                              | 250
+   artifactory.http.acceptEncoding.gzip                                  | true
+   artifactory.http.useExpectContinue                                    | false
+   artifactory.filtering.resourceSizeKb                                  | 64
+   artifactory.repo.remote.checkForExistingResourceOnRequest             | true
+   artifactory.version.query.enabled                                     | true
+   artifactory.yum.calculationRequest.aggregationTimeWindowSecs          | 60
+   artifactory.yum.calculationRequest.aggregationCycleSecs               | 60
+   artifactory.archive.licenseFile.names                                 | license,LICENSE,license.txt,LICENSE.txt,LICENSE.TXT
+   artifactory.ui.search.maxRowsPerPage                                  | 20
+   derby.storage.pageCacheSize                                           | 500
+   artifactory.release                                                   | 1322556205542
+   derby.language.logStatementText                                       | false
+   derby.stream.error.logSeverityLevel                                   | 0
+   derby.module.mgmt.jmx                                                 | org.apache.derby.impl.services.jmxnone.NoManagementService
+   artifactory.home                                                      | /var/lib/artifactory
+
+ Java System Info
+ ========================
+   java.class.version                                                    | 50.0
+   java.home                                                             | /usr/java/jdk1.6.0_31/jre
+   java.io.tmpdir                                                        | /opt/artifactory/tomcat/temp
+   java.runtime.name                                                     | Java(TM) SE Runtime Environment
+   java.runtime.version                                                  | 1.6.0_31-b04
+   java.specification.name                                               | Java Platform API Specification
+   java.specification.vendor                                             | Sun Microsystems Inc.
+   java.specification.version                                            | 1.6
+   java.vendor                                                           | Sun Microsystems Inc.
+   java.vendor.url                                                       | http
+                                                                         | //java.sun.com/
+   java.vendor.url.bug                                                   | http
+                                                                         | //java.sun.com/cgi-bin/bugreport.cgi
+   java.version                                                          | 1.6.0_31
+   java.vm.info                                                          | mixed mode
+   java.vm.name                                                          | Java HotSpot(TM) 64-Bit Server VM
+   java.vm.specification.name                                            | Java Virtual Machine Specification
+   java.vm.specification.vendor                                          | Sun Microsystems Inc.
+   java.vm.specification.version                                         | 1.0
+   java.vm.vendor                                                        | Sun Microsystems Inc.
+   java.vm.version                                                       | 20.6-b01
+   sun.arch.data.model                                                   | 64
+   sun.boot.library.path                                                 | /usr/java/jdk1.6.0_31/jre/lib/amd64
+   sun.cpu.endian                                                        | little
+   sun.cpu.isalist                                                       | 
+   sun.io.unicode.encoding                                               | UnicodeLittle
+   sun.java.launcher                                                     | SUN_STANDARD
+   sun.jnu.encoding                                                      | UTF-8
+   sun.management.compiler                                               | HotSpot 64-Bit Tiered Compilers
+   sun.os.patch.level                                                    | unknown
+   JVM Input arguments                                                   | -Djava.util.logging.config.file=/opt/artifactory/tomcat/conf/logging.properties
+                                                                         | -Xms1g
+                                                                         | -Xmx1g
+                                                                         | -Xss256k
+                                                                         | -XX
+                                                                         | PermSize=128m
+                                                                         | -XX
+                                                                         | MaxPermSize=128m
+                                                                         | -XX
+                                                                         | NewSize=384m
+                                                                         | -XX
+                                                                         | MaxNewSize=384m
+                                                                         | -Dartifactory.home=/var/lib/artifactory
+                                                                         | -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+                                                                         | -Dorg.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER=true
+                                                                         | -Djava.endorsed.dirs=/opt/artifactory/tomcat/endorsed
+                                                                         | -Dcatalina.base=/opt/artifactory/tomcat
+                                                                         | -Dcatalina.home=/opt/artifactory/tomcat
+                                                                         | -Djava.io.tmpdir=/opt/artifactory/tomcat/temp
+
+ Java Class Path Info
+ ========================
+   sun.boot.class.path                                                   | /usr/java/jdk1.6.0_31/jre/lib/resources.jar
+                                                                         | /usr/java/jdk1.6.0_31/jre/lib/rt.jar
+                                                                         | /usr/java/jdk1.6.0_31/jre/lib/sunrsasign.jar
+                                                                         | /usr/java/jdk1.6.0_31/jre/lib/jsse.jar
+                                                                         | /usr/java/jdk1.6.0_31/jre/lib/jce.jar
+                                                                         | /usr/java/jdk1.6.0_31/jre/lib/charsets.jar
+                                                                         | /usr/java/jdk1.6.0_31/jre/lib/modules/jdk.boot.jar
+                                                                         | /usr/java/jdk1.6.0_31/jre/classes
+   java.library.path                                                     | /usr/java/jdk1.6.0_31/jre/lib/amd64/server
+                                                                         | /usr/java/jdk1.6.0_31/jre/lib/amd64
+                                                                         | /usr/java/jdk1.6.0_31/jre/../lib/amd64
+                                                                         | /usr/java/packages/lib/amd64
+                                                                         | /usr/lib64
+                                                                         | /lib64
+                                                                         | /lib
+                                                                         | /usr/lib
+   java.endorsed.dirs                                                    | /opt/artifactory/tomcat/endorsed
+   java.ext.dirs                                                         | /usr/java/jdk1.6.0_31/jre/lib/ext
+                                                                         | /usr/java/packages/lib/ext
+   java.class.path                                                       | /opt/artifactory/tomcat/bin/bootstrap.jar
+                                                                         | /opt/artifactory/tomcat/bin/tomcat-juli.jar
