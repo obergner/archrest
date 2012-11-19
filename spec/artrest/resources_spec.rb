@@ -42,7 +42,7 @@ class ResourcesSample < ArtRest::Resources
     end
 
     self.mime_type = MIME::Types['application/json']
-    self.resources_creator = Proc.new do |content|
+    self.resources_creator = Proc.new do |content, options|
         self_url = content['uri']
         content['builds'].map { |build| ResourcesSample::Resource.new "#{self_url}#{build['uri']}", { :user => ARTIFACTORY_USER, :password => ARTIFACTORY_PWD } }
     end

@@ -1,29 +1,31 @@
 
 module ArtRest
 
-    class Builds
-        include Enumerable
-        include ArtRest::ResourceMixin
+    class Builds < ArtRest::Resources
 
-        def self.get options
-            Builds.new options
+        self.mime_type = MIME::Types['application/json']
+        self.resources_creator = Proc.new do |content, options|
+            self_url = content['uri']
+            (content['builds'] || []).map { |build| ArtRest::Build.new "#{self_url}#{build['uri']}", options }
         end
 
-        def initialize options
-            check_options options
-            @options = options
-            @delegate = RestClient::Resource.new "#{url}/api/build", user, password
-        end
+        class << self
 
-        def uri
-            content['uri']
-        end
+            public
 
-        def each
-            content['builds'].each do |build_hash|
-                build_name = build_hash['uri'][1..-1]
-                yield [build_name, ArtRest::Build.new(build_name, @options)]
+            def get host, options
+                Builds.new "#{host}/api/build", options
             end
+
+            protected
+
+            def matches_path path
+                path =~ %r|^/artifactory/api/build/[a-zA-Z+-._]+/?$|
+            end
+        end
+
+        def initialize url, options, &block
+            super url, options, &block
         end
     end
 end

@@ -22,7 +22,7 @@ module ArtRest
         System.info host, options
     end
 
-    def self.all_builds options
-        Builds.get options
+    def self.all_builds host, options
+        Builds.get host, options
     end
 end
