@@ -1,19 +1,25 @@
 
 module ArtRest
 
-    class Repositories
-        include Enumerable
-        include ArtRest::ResourceMixin
+    class Repositories < ArtRest::Resources
 
-        def initialize options
-            check_options options
-            @options = options
-            @delegate = RestClient::Resource.new "#{url}/api/repositories", user, password
+        self.mime_type = MIME::Types['application/json']
+        self.resources_creator = Proc.new do |content, options|
+            content.map { |repo| ArtRest::Repository.new(repo['url'], options) }
         end
 
-        def each
-            content.each do |repo_hash|
-                yield [repo_hash['key'], ArtRest::Repository.new(repo_hash['key'], @options)]
+        class << self
+
+            public
+
+            def get(base_url, options)
+                Repositories.new("#{base_url}/api/repositories", options)
+            end
+
+            protected
+
+            def matches_path(path, options)
+                path =~ %r|^/api/repositories/?$|
             end
         end
     end
