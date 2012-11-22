@@ -14,13 +14,9 @@ module ArtRest
 
             protected
 
-            def matches_path path
-                path =~ %r|^/artifactory/api/build/[a-zA-Z+-._]+/?$|
+            def matches_path(path, options)
+                path =~ %r|^/api/build/[a-zA-Z+-._]+/?$|
             end
-        end
-
-        def initialize url, options, &block
-            super url, options, &block
         end
     end
 end

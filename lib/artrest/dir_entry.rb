@@ -1,78 +1,87 @@
 
 module ArtRest
 
-    class DirEntry
-        include ArtRest::ResourceMixin
+    module DirEntry
 
         PROPERTIES = ['path', 'lastUpdated', 'repo', 'uri', 'modifiedBy', 'created', 'createdBy', 'lastModified', 'metadataUri' ]
-        
         PROPERTIES.each do |prop|
-            self.send :define_method, prop.underscore.to_sym do
+            self.send(:define_method, prop.underscore.to_sym) do
                 content[prop]
             end
         end
-        
-        def self.create repo_name, relative_path, options, descriptor_hash
+
+        def self.create_node(resource_url, options, descriptor_hash, &block)
             if descriptor_hash['folder'] or not descriptor_hash['children'].nil? then
-                ArtRest::Folder.new repo_name, relative_path, options
+                ArtRest::Folder.new(resource_url, options, &block)
             else
-                ArtRest::File.new repo_name, relative_path, options
+                ArtRest::Artifact.new(resource_url, options, &block)
             end
-        end
-
-        def to_s
-            "#{self.class.name}['#{uri}']"
-        end
-
-        protected
-
-        def initialize repo_name, relative_path, options
-            check_options options
-            @options = options
-            @delegate = RestClient::Resource.new "#{url}/api/storage/#{repo_name}#{relative_path}", user, password
         end
     end
 
 
-    class Folder < ArtRest::DirEntry
-        include Enumerable
+    class Folder < ArtRest::Resources
+        include ArtRest::DirEntry
 
-        def [] relative_path
-            entry_json = JSON.parse @delegate[relative_path].get
-            ArtRest::DirEntry.create repo, [path, relative_path].join, @options, entry_json 
+        self.mime_type = MIME::Types['application/json']
+        self.resources_creator = Proc.new do |content, options|
+            self_url = content['uri']
+            (content['children'] || []).map { |child| ArtRest::DirEntry.create_node("#{self_url}#{child['uri']}", options, child) }
         end
 
-        def each_child &block
-            each &block
+        class << self
+            protected
+
+            def matches_path(path, options)
+                return false unless path =~ %r|^/api/storage/[a-zA-Z0-9_.+-]+/.+$|
+                content_hash = JSON.parse(RestClient::Resource.new([options[:base_url], path].join, options[:user], options[:password]).get)
+                return content_hash['children']
+            end
         end
 
-        def traverse &block
+        public
+
+        def [](suburl, &new_block)
+            descriptor_hash = JSON.parse(RestClient::Resource.new(url, options, &new_block)[suburl].get)
+            ArtRest::DirEntry.create_node([url, suburl].join, options, descriptor_hash, &new_block) 
+        end
+
+        def traverse(&block)
             each do |child_entry|
-                block.call child_entry
-                if child_entry.is_a? ArtRest::Folder then
-                    child_entry.each_child &block
+                block.call(child_entry)
+                if child_entry.is_a?(ArtRest::Folder) then
+                    child_entry.each &block
                 end
             end
         end
-        
-        private
-
-        def each
-            content['children'].each do |child_entry|
-                yield ArtRest::DirEntry.create repo, [path, child_entry['uri']].join, @options, child_entry
-            end
-        end
     end
 
-    class File < ArtRest::DirEntry
-        
+    class Artifact < ArtRest::Resource
+        include ArtRest::DirEntry
+
         FILE_PROPS = ['mimeType', 'downloadUri', 'size', 'checksums', 'originalChecksums']
-        
         FILE_PROPS.each do |prop|
-            self.send :define_method, prop.underscore.to_sym do
+            self.send(:define_method, prop.underscore.to_sym) do
                 content[prop]
             end
         end
-        
+
+        self.mime_type = MIME::Types['application/json']
+
+        class << self
+            protected
+
+            def matches_path(path, options)
+                return false unless path =~ %r|^/api/storage/[a-zA-Z0-9_.+-]+/.+$|
+                content_hash = JSON.parse(RestClient::Resource.new([options[:base_url], path].join, options[:user], options[:password]).get)
+                return ! content_hash['children']
+            end
+        end
+
+        public
+
+        def [](suburl, &new_block)
+            raise NotImplementedError.new("Instances of ArtRest::Artifact don't have child resources")
+        end
     end
 end

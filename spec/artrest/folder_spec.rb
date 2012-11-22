@@ -5,7 +5,8 @@ describe ArtRest::Folder do
     before(:each) do
         @repo_name   = 'ext-snapshot-local'
         @folder_path = '/vnet/sms/infrastructure/rpm-elasticsearch'
-        @artfolder   = ArtRest::DirEntry.create @repo_name, @folder_path, OPTIONS, { 'uri' => '/common', 'folder' => true }
+        @folder_url  = "#{ARTIFACTORY_URL}/api/storage/#{@repo_name}#{@folder_path}"
+        @artfolder   = ArtRest::Folder.new @folder_url, OPTIONS
         register_stub_request('./folder/top_folder_response.txt', "api/storage/#{@repo_name}#{@folder_path}")
         register_stub_request('./folder/sub_folder_response.txt', "api/storage/#{@repo_name}#{@folder_path}/1.0.0-SNAPSHOT")
         register_stub_request('./folder/sub_folder_response.txt', "api/storage/#{@repo_name}#{@folder_path}/1.0.0-SNAPSHOT/rpm-elasticsearch-1.0.0-20120411.155423-1.pom")
@@ -14,14 +15,14 @@ describe ArtRest::Folder do
     it "should iterate over all child folders" do
         expected_number_of_folders = 1
         actual_number_of_folders = 0
-        @artfolder.each_child do |folder|
+        @artfolder.each do |folder|
             actual_number_of_folders += 1 
         end
         actual_number_of_folders.should equal expected_number_of_folders
     end
 
     it "should return each child folder as an ArtRest::Folder instance" do
-        @artfolder.each_child do |folder|
+        @artfolder.each do |folder|
             folder.should be_an_instance_of ArtRest::Folder
         end
     end

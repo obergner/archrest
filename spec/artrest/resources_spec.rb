@@ -5,7 +5,7 @@ describe ArtRest::Resources do
     before(:each) do
         @resources_path = "api/builds";
         @resources_url = "#{ARTIFACTORY_URL}/#{@resources_path}"
-        @resources_res  = ResourcesSample.new @resources_url, { :user => ARTIFACTORY_USER, :password => ARTIFACTORY_PWD }
+        @resources_res  = ResourcesSample.new(@resources_url, OPTIONS)
         register_stub_request('./resources/resources_response.txt', @resources_path)
     end
 
@@ -31,32 +31,32 @@ class ResourcesSample < ArtRest::Resources
 
             protected
 
-            def matches_path path
+            def matches_path(path, options)
                 path =~ %r|^/artifactory/api/builds/\w+$|
             end
         end
 
-        def initialize url, options, &block
-            super url, options, &block
+        def initialize(resource_url, options, &block)
+            super(resource_url, options, &block)
         end
     end
 
     self.mime_type = MIME::Types['application/json']
     self.resources_creator = Proc.new do |content, options|
         self_url = content['uri']
-        content['builds'].map { |build| ResourcesSample::Resource.new "#{self_url}#{build['uri']}", { :user => ARTIFACTORY_USER, :password => ARTIFACTORY_PWD } }
+        content['builds'].map { |build| ResourcesSample::Resource.new("#{self_url}#{build['uri']}", OPTIONS) }
     end
 
     class << self
 
         protected
 
-        def matches_path path
+        def matches_path(path, options)
             path =~ %r|^/artifactory/api/builds$|
         end
     end
 
-    def initialize url, options, &block
-        super url, options, &block
+    def initialize(url, options, &block)
+        super(url, options, &block)
     end
 end

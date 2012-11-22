@@ -3,11 +3,10 @@ require File.expand_path("../../spec_helper", __FILE__)
 describe ArtRest::Build do
 
     before(:each) do
-        @options    = { :user => ARTIFACTORY_USER, :password => ARTIFACTORY_PWD }
         @build_name = 'vnet.sms.common.shell'
         @build_path = "api/build/#{@build_name}"
         @build_url  = "#{ARTIFACTORY_URL}/#{@build_path}"
-        @artbuild   = ArtRest::Build.new @build_url, @options
+        @artbuild   = ArtRest::Build.new @build_url, OPTIONS 
         register_stub_request('./build/build_response_correct.txt', "#{@build_path}")
     end
 

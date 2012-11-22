@@ -1,4 +1,4 @@
-require 'uri'
+require 'addressable/uri'
 require 'rest-client'
 require 'json'
 require 'mime/types'
@@ -18,11 +18,11 @@ require 'artrest/build'
 
 module ArtRest
 
-    def self.system_info host, options
-        System.info host, options
+    def self.system_info(base_url, options)
+        System.info(base_url, options)
     end
 
-    def self.all_builds host, options
-        Builds.get host, options
+    def self.all_builds(base_url, options)
+        Builds.get(base_url, options)
     end
 end

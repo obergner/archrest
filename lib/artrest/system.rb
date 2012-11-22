@@ -8,19 +8,15 @@ module ArtRest
 
             public
 
-            def info host, options
-                System.new("#{host}/api/system", options).content
+            def info(base_url, options)
+                System.new("#{base_url}/api/system", options).content
             end
 
             protected
 
-            def matches_path path
+            def matches_path(path, options)
                 path =~ %r|^/api/system/?$|
             end
-        end
-
-        def initialize url, options, &block
-            super url, options, &block
         end
     end
 end

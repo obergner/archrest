@@ -5,7 +5,7 @@ require "rake/rdoctask"
 
 desc "Run all specs"
 RSpec::Core::RakeTask.new(:spec) do |spec|
-	spec.rspec_opts = ["--color"]
+	spec.rspec_opts = ["--color", "--format", "nested"]
 	spec.pattern = 'spec/**/*_spec.rb'
 end
 

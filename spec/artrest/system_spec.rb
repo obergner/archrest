@@ -3,9 +3,8 @@ require File.expand_path("../../spec_helper", __FILE__)
 describe ArtRest::System do
 
     before(:each) do
-        @options = { :user => ARTIFACTORY_USER, :password => ARTIFACTORY_PWD }
         @artsys_url = "#{ARTIFACTORY_URL}/api/system"
-        @artsys  = ArtRest::System.new @artsys_url, @options
+        @artsys  = ArtRest::System.new(@artsys_url, OPTIONS)
         register_stub_request('./system/system_response.txt', "api/system")
     end
 
@@ -15,7 +14,7 @@ describe ArtRest::System do
     end
 
     it "should allow a shortcut to access system info" do
-        system_info = ArtRest::System.info ARTIFACTORY_URL, @options
+        system_info = ArtRest::System.info(ARTIFACTORY_URL, OPTIONS)
         system_info.should_not be_nil
         system_info.should be_an_instance_of String
     end
