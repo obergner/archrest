@@ -8,14 +8,18 @@ describe ArtRest::System do
         register_stub_request('./system/system_response.txt', "api/system")
     end
 
-    it "should output system info as text" do
-        @artsys.to_s.should_not be_nil
-        @artsys.to_s.should be_an_instance_of String
+    describe "::info" do
+        it "should allow a shortcut to access system info" do
+            system_info = ArtRest::System.info(ARTIFACTORY_URL, OPTIONS)
+            system_info.should_not be_nil
+            system_info.should be_an_instance_of String
+        end
     end
 
-    it "should allow a shortcut to access system info" do
-        system_info = ArtRest::System.info(ARTIFACTORY_URL, OPTIONS)
-        system_info.should_not be_nil
-        system_info.should be_an_instance_of String
+    describe "#to_s" do
+        it "should output system info as text" do
+            @artsys.to_s.should_not be_nil
+            @artsys.to_s.should be_an_instance_of String
+        end
     end
 end

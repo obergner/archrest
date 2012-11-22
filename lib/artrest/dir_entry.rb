@@ -10,8 +10,8 @@ module ArtRest
             end
         end
 
-        def self.create_node(resource_url, options, descriptor_hash, &block)
-            if descriptor_hash['folder'] or not descriptor_hash['children'].nil? then
+        def self.create_node(resource_url, options, resource_descriptor, &block)
+            if resource_descriptor['folder'] or not resource_descriptor['children'].nil? then
                 ArtRest::Folder.new(resource_url, options, &block)
             else
                 ArtRest::Artifact.new(resource_url, options, &block)
@@ -42,8 +42,8 @@ module ArtRest
         public
 
         def [](suburl, &new_block)
-            descriptor_hash = JSON.parse(RestClient::Resource.new(url, options, &new_block)[suburl].get)
-            ArtRest::DirEntry.create_node([url, suburl].join, options, descriptor_hash, &new_block) 
+            subresource_content = JSON.parse(RestClient::Resource.new(url, options, &new_block)[suburl].get)
+            ArtRest::DirEntry.create_node([url, suburl].join, options, subresource_content, &new_block) 
         end
 
         def traverse(&block)

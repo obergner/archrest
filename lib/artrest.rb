@@ -15,6 +15,7 @@ require 'artrest/repository'
 require 'artrest/dir_entry'
 require 'artrest/builds'
 require 'artrest/build'
+require 'artrest/buildnumber'
 
 module ArtRest
 

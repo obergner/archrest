@@ -13,6 +13,9 @@ describe ArtRest::Resource do
             @build_url = "#{ARTIFACTORY_URL}/api/build/vnet.sms.common.shell"
             register_stub_request('./resource/build_response.txt', "api/build/vnet.sms.common.shell")
 
+            @buildnumber_url = "#{ARTIFACTORY_URL}/api/build/vnet.sms.common.shell/25"
+            register_stub_request('./resource/buildnumber_response.txt', "api/build/vnet.sms.common.shell/25")
+
             @folder_url = "#{ARTIFACTORY_URL}/api/storage/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT"
             register_stub_request('./resource/folder_response.txt', 
                                   'api/storage/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT')
@@ -38,6 +41,12 @@ describe ArtRest::Resource do
             instance = ArtRest::Resource.create("#{@build_url}?foo=bar", OPTIONS)
             instance.should_not be_nil
             instance.should be_an_instance_of ArtRest::Build
+        end
+
+        it "should create an ArtRest::Buildnumber instance given a buildnumber resource URL" do
+            instance = ArtRest::Resource.create("#{@buildnumber_url}?foo=bar", OPTIONS)
+            instance.should_not be_nil
+            instance.should be_an_instance_of ArtRest::Buildnumber
         end
 
         it "should create an ArtRest::Folder instance given a folder resource URL" do

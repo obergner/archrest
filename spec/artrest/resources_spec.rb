@@ -9,16 +9,20 @@ describe ArtRest::Resources do
         register_stub_request('./resources/resources_response.txt', @resources_path)
     end
 
-    it "should return json content as Ruby hash" do
-        content = @resources_res.content
-        content.should_not be_nil
-        content.should be_an_instance_of Hash
+    describe "#content" do
+        it "should return json content as Ruby hash" do
+            content = @resources_res.content
+            content.should_not be_nil
+            content.should be_an_instance_of Hash
+        end
     end
 
-    it "should iterate over all included resources" do
-        @resources_res.each do |res|
-            res.should_not be_nil
-            res.should be_an_instance_of ResourcesSample::Resource
+    describe "#each" do
+        it "should iterate over all included resources" do
+            @resources_res.each do |res|
+                res.should_not be_nil
+                res.should be_an_instance_of ResourcesSample::Resource
+            end
         end
     end
 end

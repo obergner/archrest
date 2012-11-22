@@ -6,8 +6,7 @@ module ArtRest
         self.mime_type = MIME::Types['application/json']
         self.resources_creator = Proc.new do |content, options|
             self_url = content['uri']
-            # TODO: Return ArtRest::BuildNumber once it exists
-            (content['buildsNumbers'] || []).map { |buildnr| buildnr }
+            (content['buildsNumbers'] || []).map { |buildnr| ArtRest::Buildnumber.new("#{self_url}#{buildnr['uri']}", options) }
         end
 
         class << self

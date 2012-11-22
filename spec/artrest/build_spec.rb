@@ -10,17 +10,28 @@ describe ArtRest::Build do
         register_stub_request('./build/build_response_correct.txt', "#{@build_path}")
     end
 
-    it "should iterate over all build runs" do
-        expected_number_of_build_runs = 63
-        actual_number_of_build_runs = 0
-        @artbuild.each do |build_number|
-            actual_number_of_build_runs += 1 
+    describe "#each" do
+        it "should iterate over all build numbers" do
+            expected_number_of_build_numbers = 63
+            actual_number_of_build_numbers = 0
+            @artbuild.each do |build_number|
+                actual_number_of_build_numbers += 1 
+            end
+            actual_number_of_build_numbers.should equal expected_number_of_build_numbers
         end
-        actual_number_of_build_runs.should equal expected_number_of_build_runs
+        
+        it "should return each build number as an instance of ArtRest::BuildNumber" do
+            @artbuild.each do |build_number|
+                build_number.should_not be_nil
+                build_number.should be_an_instance_of ArtRest::Buildnumber
+            end
+        end
     end
-    
-    it "should expose the url property" do
-        @artbuild.url.should eq @build_url
+
+    describe "#url" do
+        it "should expose the url property" do
+            @artbuild.url.should eq @build_url
+        end
     end
 
 end
