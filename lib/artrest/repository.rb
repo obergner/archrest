@@ -1,33 +1,20 @@
 
 module ArtRest
 
-    class Repository
-        include Enumerable
-        include ArtRest::ResourceMixin
+    class Repository < ArtRest::Resources
 
-        PROPERTIES = ['path', 'lastUpdated', 'repo', 'uri', 'modifiedBy', 'created', 'createdBy', 'lastModified', 'metadataUri' ]
-
-        PROPERTIES.each do |prop|
-            self.send :define_method, prop.underscore.to_sym do
-                content[prop]
-            end
+        self.mime_type = MIME::Types['application/json']
+        self.resources_creator = Proc.new do |content, options|
+            self_url = content['uri']
+            (content['children'] || []).map { |child| ArtRest::DirEntry.create_node("#{self_url}#{child['uri']}", options, child) }
         end
 
-        def initialize name, options
-            check_options options
-            @options = options
-            @delegate = RestClient::Resource.new "#{url}/api/storage/#{name}", user, password
-        end
+        class << self
 
-        def each_folder &block
-            each &block
-        end
+            protected
 
-        private
-
-        def each
-            content['children'].each do |dir_entry_hash|
-                yield dir_entry_hash
+            def matches_path(path, options)
+                path =~ %r|^/api/storage/[a-zA-Z+-._]+/?$|
             end
         end
     end

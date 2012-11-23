@@ -33,5 +33,4 @@ describe ArtRest::Build do
             @artbuild.url.should eq @build_url
         end
     end
-
 end

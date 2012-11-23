@@ -8,6 +8,13 @@ describe ArtRest::Repositories do
         register_stub_request('./repositories/repositories_response.txt', "api/repositories")
     end
 
+    describe "::get" do
+        it "should return an ArtRest::Repositories instance" do
+            repositories = ArtRest::Repositories.get(ARTIFACTORY_URL, OPTIONS)
+            repositories.should be_an_instance_of ArtRest::Repositories
+        end
+    end
+
     describe "#each" do
         it "should iterate over all repositories" do
             expected_number_of_repos = 24

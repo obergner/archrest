@@ -16,6 +16,9 @@ describe ArtRest::Resource do
             @buildnumber_url = "#{ARTIFACTORY_URL}/api/build/vnet.sms.common.shell/25"
             register_stub_request('./resource/buildnumber_response.txt', "api/build/vnet.sms.common.shell/25")
 
+            @repositories_url = "#{ARTIFACTORY_URL}/api/repositories"
+            register_stub_request('./resource/repositories_response.txt', "api/repositories")
+
             @folder_url = "#{ARTIFACTORY_URL}/api/storage/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT"
             register_stub_request('./resource/folder_response.txt', 
                                   'api/storage/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT')
@@ -47,6 +50,12 @@ describe ArtRest::Resource do
             instance = ArtRest::Resource.create("#{@buildnumber_url}?foo=bar", OPTIONS)
             instance.should_not be_nil
             instance.should be_an_instance_of ArtRest::Buildnumber
+        end
+
+        it "should create an ArtRest::Repositories instance given a repositories resource URL" do
+            instance = ArtRest::Resource.create("#{@repositories_url}?foo=bar", OPTIONS)
+            instance.should_not be_nil
+            instance.should be_an_instance_of ArtRest::Repositories
         end
 
         it "should create an ArtRest::Folder instance given a folder resource URL" do
@@ -82,23 +91,29 @@ describe ArtRest::Resource do
             register_stub_request('./resource/json_response.txt', "api/json")
         end
 
-        it "should return plain text content as string" do
-            content = @string_res.content
-            content.should_not be_nil
-            content.should be_an_instance_of String
-        end
-
-        it "should pass content on to a given block" do
-            @string_res.content do |content|
+        context "when dealing with plain text content" do
+            it "should return content as string" do
+                content = @string_res.content
                 content.should_not be_nil
                 content.should be_an_instance_of String
             end
         end
 
-        it "should return json content as Ruby hash" do
-            content = @json_res.content
-            content.should_not be_nil
-            content.should be_an_instance_of Hash
+        context "when dealing with json content" do
+            it "should return content as ruby hash" do
+                content = @json_res.content
+                content.should_not be_nil
+                content.should be_an_instance_of Hash
+            end
+        end
+
+        context "when passing in a block" do
+            it "should pass content on to a given block" do
+                @string_res.content do |content|
+                    content.should_not be_nil
+                    content.should be_an_instance_of String
+                end
+            end
         end
     end
 
