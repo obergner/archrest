@@ -19,6 +19,9 @@ describe ArtRest::Resource do
             @repositories_url = "#{ARTIFACTORY_URL}/api/repositories"
             register_stub_request('./resource/repositories_response.txt', "api/repositories")
 
+            @repository_url = "#{ARTIFACTORY_URL}/api/storage/libs-snapshot-local"
+            register_stub_request('./resource/repository_response.txt', "api/storage/libs-snapshot-local")
+
             @folder_url = "#{ARTIFACTORY_URL}/api/storage/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT"
             register_stub_request('./resource/folder_response.txt', 
                                   'api/storage/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT')
@@ -28,46 +31,60 @@ describe ArtRest::Resource do
                                   'api/storage/ext-snapshot-local/vnet/sms/infrastructure/rpm-elasticsearch/1.0.0-SNAPSHOT//rpm-elasticsearch-1.0.0-20120411.155423-1.pom')
         end
 
-        it "should create an ArtRest::System instance given a system resource URL" do
-            instance = ArtRest::Resource.create("#{@system_url}?foo=bar", OPTIONS)
-            instance.should_not be_nil
-            instance.should be_an_instance_of ArtRest::System
+        context "given a system resource URL" do
+            it "should create an ArtRest::System instance" do
+                instance = ArtRest::Resource.create("#{@system_url}?foo=bar", OPTIONS)
+                instance.should be_an_instance_of ArtRest::System
+            end
         end
 
-        it "should create an ArtRest::Builds instance given a builds resource URL" do
-            instance = ArtRest::Resource.create("#{@builds_url}?foo=bar", OPTIONS)
-            instance.should_not be_nil
-            instance.should be_an_instance_of ArtRest::Builds
+        context "given a builds resource URL" do
+            it "should create an ArtRest::Builds instance" do
+                instance = ArtRest::Resource.create("#{@builds_url}?foo=bar", OPTIONS)
+                instance.should be_an_instance_of ArtRest::Builds
+            end
         end
 
-        it "should create an ArtRest::Build instance given a build resource URL" do
-            instance = ArtRest::Resource.create("#{@build_url}?foo=bar", OPTIONS)
-            instance.should_not be_nil
-            instance.should be_an_instance_of ArtRest::Build
+        context "given build resource URL" do
+            it "should create an ArtRest::Build instance" do
+                instance = ArtRest::Resource.create("#{@build_url}?foo=bar", OPTIONS)
+                instance.should be_an_instance_of ArtRest::Build
+            end
         end
 
-        it "should create an ArtRest::Buildnumber instance given a buildnumber resource URL" do
-            instance = ArtRest::Resource.create("#{@buildnumber_url}?foo=bar", OPTIONS)
-            instance.should_not be_nil
-            instance.should be_an_instance_of ArtRest::Buildnumber
+        context "given a buildnumber resource URL" do
+            it "should create an ArtRest::Buildnumber instance" do
+                instance = ArtRest::Resource.create("#{@buildnumber_url}?foo=bar", OPTIONS)
+                instance.should be_an_instance_of ArtRest::Buildnumber
+            end
         end
 
-        it "should create an ArtRest::Repositories instance given a repositories resource URL" do
-            instance = ArtRest::Resource.create("#{@repositories_url}?foo=bar", OPTIONS)
-            instance.should_not be_nil
-            instance.should be_an_instance_of ArtRest::Repositories
+        context "given a repositories resource URL" do
+            it "should create an ArtRest::Repositories instance" do
+                instance = ArtRest::Resource.create("#{@repositories_url}?foo=bar", OPTIONS)
+                instance.should be_an_instance_of ArtRest::Repositories
+            end
         end
 
-        it "should create an ArtRest::Folder instance given a folder resource URL" do
-            instance = ArtRest::Resource.create("#{@folder_url}?foo=bar", OPTIONS)
-            instance.should_not be_nil
-            instance.should be_an_instance_of ArtRest::Folder
+        context "given a repository resource URL" do
+            it "should create an ArtRest::Repository instance" do
+                instance = ArtRest::Resource.create("#{@repository_url}?foo=bar", OPTIONS)
+                instance.should be_an_instance_of ArtRest::Repository
+            end
         end
 
-        it "should create an ArtRest::Artifact instance given an artifact resource URL" do
-            instance = ArtRest::Resource.create("#{@artifact_url}?foo=bar", OPTIONS)
-            instance.should_not be_nil
-            instance.should be_an_instance_of ArtRest::Artifact
+        context "given a folder resource URL" do
+            it "should create an ArtRest::Folder instance" do
+                instance = ArtRest::Resource.create("#{@folder_url}?foo=bar", OPTIONS)
+                instance.should be_an_instance_of ArtRest::Folder
+            end
+        end
+
+        context "given an artifact resource URL" do
+            it "should create an ArtRest::Artifact instance" do
+                instance = ArtRest::Resource.create("#{@artifact_url}?foo=bar", OPTIONS)
+                instance.should be_an_instance_of ArtRest::Artifact
+            end
         end
     end
 

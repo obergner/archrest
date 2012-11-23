@@ -9,16 +9,6 @@ module ArtRest
             raise NotImplementedError.new('ArtRest::Resources is an abstract base class and should never be called directly')
         end
 
-        class << self
-
-            protected
-
-            def matches_path(path, options)
-                # We never match, since we are an abstract base class
-                false
-            end
-        end
-
         public
 
         def each &block

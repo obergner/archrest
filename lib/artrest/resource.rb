@@ -3,6 +3,10 @@ module ArtRest
 
     class Resource < RestClient::Resource
 
+        # Hide method from RestClient::Resource by default since they
+        # may make no sense on a concrete subclass.
+        private :get, :post, :put, :delete, :head, :patch
+
         class_attribute :mime_type, :instance_writer => false
         self.mime_type = MIME::Types['application/json']
 
@@ -19,17 +23,17 @@ module ArtRest
             def create(resource_url, options, &block)
                 check_options(options)
                 @@subclasses.each do |subclass|
-                    return subclass.new(resource_url, options, &block) if subclass.matches_path(relative_path(resource_url, options), options)
+                    return subclass.new(resource_url, options, &block) if subclass.respond_to?(:matches_path) and subclass.matches_path(relative_path(resource_url, options), options)
                 end
                 raise ArgumentError.new("Unsupported resource URL #{resource_url}")
             end
-            
+
             def check_options(options)
                 raise ArgumentError, "Must pass :base_url" unless options[:base_url]
                 raise ArgumentError, "Must pass :user" unless options[:user]
                 raise ArgumentError, "Must pass :password" unless options[:password]
             end
-            
+
             protected
 
             def relative_path(resource_url, options)
@@ -38,10 +42,6 @@ module ArtRest
                 resource_path = Addressable::URI.parse(resource_url).path
                 resource_path.slice!(base_path)
                 resource_path
-            end
-
-            def matches_path(path, options)
-                raise NotImplementedError.new("matches_path is an abstract class method that should not be called on the superclass")
             end
         end
 
