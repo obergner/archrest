@@ -9,6 +9,9 @@ module ArtRest
             (content['builds'] || []).map { |build| ArtRest::Build.new("#{self_url}#{build['uri']}", options) }
         end
 
+        resource_attributes :uri, 
+            :builds
+
         class << self
 
             public

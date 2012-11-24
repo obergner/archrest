@@ -19,11 +19,25 @@ describe ArtRest::Build do
             end
             actual_number_of_build_numbers.should equal expected_number_of_build_numbers
         end
-        
+
         it "should return each build number as an instance of ArtRest::BuildNumber" do
             @artbuild.each do |build_number|
                 build_number.should_not be_nil
                 build_number.should be_an_instance_of ArtRest::Buildnumber
+            end
+        end
+    end
+
+    describe "[all resource attributes]" do
+
+        before(:each) do
+            @resource_attributes = [:uri, :buildsNumbers]
+        end
+
+        it "should return a non-nil value" do
+            @resource_attributes.each do |attr|
+                value = @artbuild.send(attr)
+                value.should_not be_nil
             end
         end
     end

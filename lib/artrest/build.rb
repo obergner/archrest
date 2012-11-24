@@ -9,6 +9,9 @@ module ArtRest
             (content['buildsNumbers'] || []).map { |buildnr| ArtRest::Buildnumber.new("#{self_url}#{buildnr['uri']}", options) }
         end
 
+        resource_attributes :uri,
+            :buildsNumbers
+
         class << self
 
             protected

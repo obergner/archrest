@@ -9,6 +9,17 @@ module ArtRest
             (content['children'] || []).map { |child| ArtRest::DirEntry.create_node("#{self_url}#{child['uri']}", options, child) }
         end
 
+        resource_attributes :path, 
+            :lastUpdated,
+            :repo,
+            :uri,
+            :modifiedBy,
+            :created,
+            :createdBy,
+            :lastModified,
+            :metadataUri,
+            :children
+
         class << self
 
             protected

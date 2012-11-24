@@ -3,15 +3,8 @@ module ArtRest
 
     module DirEntry
 
-        PROPERTIES = ['path', 'lastUpdated', 'repo', 'uri', 'modifiedBy', 'created', 'createdBy', 'lastModified', 'metadataUri' ]
-        PROPERTIES.each do |prop|
-            self.send(:define_method, prop.underscore.to_sym) do
-                content[prop]
-            end
-        end
-
         def self.create_node(resource_url, options, resource_descriptor, &block)
-            if resource_descriptor['folder'] or not resource_descriptor['children'].nil? then
+            if resource_descriptor['folder'] or not resource_descriptor['children'].nil?
                 ArtRest::Folder.new(resource_url, options, &block)
             else
                 ArtRest::Artifact.new(resource_url, options, &block)
@@ -25,17 +18,26 @@ module ArtRest
 
         self.mime_type = MIME::Types['application/json']
         self.resources_creator = Proc.new do |content, options|
-            self_url = content['uri']
-            (content['children'] || []).map { |child| ArtRest::DirEntry.create_node("#{self_url}#{child['uri']}", options, child) }
+            (content['children'] || []).map { |child| ArtRest::DirEntry.create_node("#{content['uri']}#{child['uri']}", options, child) }
         end
+
+        resource_attributes :path, 
+            :lastUpdated,
+            :repo,
+            :uri,
+            :modifiedBy,
+            :created,
+            :createdBy,
+            :lastModified,
+            :metadataUri
 
         class << self
             protected
 
             def matches_path(path, options)
                 return false unless path =~ %r|^/api/storage/[a-zA-Z0-9_.+-]+/.+$|
-                content_hash = JSON.parse(RestClient::Resource.new([options[:base_url], path].join, options[:user], options[:password]).get)
-                return content_hash['children']
+                    content_hash = JSON.parse(RestClient::Resource.new([options[:base_url], path].join, options[:user], options[:password]).get)
+                return content_hash['children'].nil?
             end
         end
 
@@ -59,21 +61,29 @@ module ArtRest
     class Artifact < ArtRest::Resource
         include ArtRest::DirEntry
 
-        FILE_PROPS = ['mimeType', 'downloadUri', 'size', 'checksums', 'originalChecksums']
-        FILE_PROPS.each do |prop|
-            self.send(:define_method, prop.underscore.to_sym) do
-                content[prop]
-            end
-        end
-
         self.mime_type = MIME::Types['application/json']
+
+        resource_attributes :path,
+            :lastUpdated,
+            :repo,
+            :uri,
+            :modifiedBy,
+            :created,
+            :createdBy,
+            :lastModified,
+            :metadataUri,
+            :mimeType,
+            :downloadUri,
+            :size,
+            :checksums,
+            :originalChecksums
 
         class << self
             protected
 
             def matches_path(path, options)
                 return false unless path =~ %r|^/api/storage/[a-zA-Z0-9_.+-]+/.+$|
-                content_hash = JSON.parse(RestClient::Resource.new([options[:base_url], path].join, options[:user], options[:password]).get)
+                    content_hash = JSON.parse(RestClient::Resource.new([options[:base_url], path].join, options[:user], options[:password]).get)
                 return ! content_hash['children']
             end
         end

@@ -34,6 +34,20 @@ describe ArtRest::Builds do
         end
     end
 
+    describe "[all resource attributes]" do
+
+        before(:each) do
+            @resource_attributes = [:uri, :builds]
+        end
+
+        it "should return a non-nil value" do
+            @resource_attributes.each do |attr|
+                value = @artbuilds.send(attr)
+                value.should_not be_nil
+            end
+        end
+    end
+
     describe "#url" do
         it "should expose the url property" do
             @artbuilds.url.should eq @builds_url

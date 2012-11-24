@@ -18,10 +18,33 @@ describe ArtRest::Repository do
             end
             actual_number_of_folders.should equal expected_number_of_folders
         end
-        
+
         it "should return each folder as an instance of ArtRest::Folder" do
             @artrepo.each do |folder|
                 folder.should be_an_instance_of ArtRest::Folder
+            end
+        end
+    end
+
+    describe "[all resource attributes]" do
+
+        before(:each) do
+            @resource_attributes = [:path,
+                                    :lastUpdated,
+                                    :repo,
+                                    :uri,
+                                    :modifiedBy,
+                                    :created,
+                                    :createdBy,
+                                    :lastModified,
+                                    :metadataUri,
+                                    :children]
+        end
+
+        it "should return a non-nil value" do
+            @resource_attributes.each do |attr|
+                value = @artrepo.send(attr)
+                value.should_not be_nil
             end
         end
     end

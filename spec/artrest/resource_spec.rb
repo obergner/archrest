@@ -45,7 +45,7 @@ describe ArtRest::Resource do
             end
         end
 
-        context "given build resource URL" do
+        context "given a build resource URL" do
             it "should create an ArtRest::Build instance" do
                 instance = ArtRest::Resource.create("#{@build_url}?foo=bar", OPTIONS)
                 instance.should be_an_instance_of ArtRest::Build

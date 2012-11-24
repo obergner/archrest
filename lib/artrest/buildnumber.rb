@@ -5,6 +5,9 @@ module ArtRest
 
         self.mime_type = MIME::Types['application/json']
 
+        resource_attributes :uri, 
+            :buildInfo
+
         class << self
             protected
 

@@ -29,9 +29,25 @@ describe ArtRest::Folder do
         end
     end
 
-    describe "#modified_by" do
-        it "should expose the modifiedBy property" do
-            @artfolder.modified_by.should eq 'admin'
+    describe "[all resource attributes]" do
+
+        before(:each) do
+            @resource_attributes = [:path, 
+                                    :lastUpdated,
+                                    :repo,
+                                    :uri,
+                                    :modifiedBy,
+                                    :created,
+                                    :createdBy,
+                                    :lastModified,
+                                    :metadataUri]
+        end
+
+        it "should return a non-nil value" do
+            @resource_attributes.each do |attr|
+                value = @artfolder.send(attr)
+                value.should_not be_nil
+            end
         end
     end
 
@@ -41,7 +57,7 @@ describe ArtRest::Folder do
             folder.should_not be_nil
             folder.should be_an_instance_of ArtRest::Folder
         end
-        
+
         it "should return a contained artifact as an instance of ArtRest::Artifact" do
             artifact = @artfolder['1.0.0-SNAPSHOT/rpm-elasticsearch-1.0.0-20120411.155423-1.pom']
             artifact.should_not be_nil

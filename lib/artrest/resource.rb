@@ -7,9 +7,27 @@ module ArtRest
         # may make no sense on a concrete subclass.
         private :get, :post, :put, :delete, :head, :patch
 
+        # This class' mime type, stored using active support's
+        # class_attribute
         class_attribute :mime_type, :instance_writer => false
         self.mime_type = MIME::Types['application/json']
 
+        # Take an array of symbols [*attrs] and for each symbol
+        # [attr] define an instance method "attr" on this class 
+        # that returns "content["attr"].
+        # So, given an attribute ":modifiedBy" this will define
+        #    def modifiedBy
+        #        content['modifiedBy']
+        #    end
+        def self.resource_attributes(*attrs)
+            attrs.each do |attr|
+                define_method(attr) do
+                    content[attr.to_s]
+                end
+            end
+        end
+
+        # Array of all RestClient::Resource subclasses
         @@subclasses = []
 
         class << self
