@@ -3,7 +3,7 @@ require 'rest-client'
 require 'json'
 require 'mime/types'
 require 'active_support/core_ext/string/inflections'
-require 'active_support/core_ext/class/attribute'
+require 'active_support/core_ext/kernel/singleton_class'
 
 require 'artrest/version'
 require 'artrest/resource'

@@ -3,42 +3,77 @@ module ArtRest
 
     class Resource < RestClient::Resource
 
-        # Hide method from RestClient::Resource by default since they
-        # may make no sense on a concrete subclass.
-        private :get, :post, :put, :delete, :head, :patch
-
-        # This class' mime type, stored using active support's
-        # class_attribute
-        class_attribute :mime_type, :instance_writer => false
-        self.mime_type = MIME::Types['application/json']
-
-        # Take an array of symbols [*attrs] and for each symbol
-        # [attr] define an instance method "attr" on this class 
-        # that returns "content["attr"].
-        # So, given an attribute ":modifiedBy" this will define
-        #    def modifiedBy
-        #        content['modifiedBy']
-        #    end
-        def self.resource_attributes(*attrs)
-            attrs.each do |attr|
-                define_method(attr) do
-                    return content[attr.to_s] unless block_given?
-                    yield content[attr.to_s]
-                end
-            end
-        end
-
-        # Array of all RestClient::Resource subclasses
-        @@subclasses = []
-
         class << self
 
             public
 
+            # Add +subclass+ to the list of known subclasses.
+            #
+            # * *Args*    :
+            #   - +subclass+ -> The subclass to add
+            #
             def inherited(subclass)
+                @@subclasses ||= []
                 @@subclasses << subclass
             end
 
+            # When called with +value+ as argument define a
+            # singleton method +mime_type+ on the class this
+            # method is called on, where calling +mime_type+
+            # will return +value+.
+            #
+            # This essentially emulates a "proper" class variable
+            # +mime_type+.
+            #
+            # * *Args*    :
+            #   - +value+ -> This class' mime type [MIME::Type/required]
+            #
+            def mime_type=(value)
+                self.singleton_class.class_eval do
+                    define_method(:mime_type) do
+                        value
+                    end
+                end
+            end
+
+            # Take an array of symbols +attrs+ and for each symbol
+            # "attr" define an instance method +attr+ on this class 
+            # that returns <tt>content["attr"]</tt>.
+            #
+            # So, given an attribute <tt>:modifiedBy</tt> this will define
+            #
+            #    def modifiedBy
+            #        content['modifiedBy']
+            #    end
+            #
+            def resource_attributes(*attrs)
+                attrs.each do |attr|
+                    define_method(attr) do
+                        return content[attr.to_s] unless block_given?
+                        yield content[attr.to_s]
+                    end
+                end
+            end
+
+            # Factory method: create and return an instance of a concrete
+            # ArtRest::Resource subclass appropriate for the supplied
+            # +resource_url+.
+            #
+            # === Example
+            #
+            #   ArtRest::Resource.create('http://localhost:8081/artifactory/api/system,
+            #                             options)
+            #
+            # will return an ArtRest::System instance.
+            #
+            # * *Args*    :
+            #   - +resource_url+ -> URL of the resource to create [required]
+            #   - +options+      -> Options hash holding base_url, user and password [required]
+            #   - +block+        -> Passed on to <tt>RestClient::Resource.initialize</tt> [optional]
+            # * *Returns* :
+            #   - An instance of a concrete ArtRest::Resource subclass appropriate
+            #     supplied +resource_url+
+            #
             def create(resource_url, options, &block)
                 check_options(options)
                 @@subclasses.each do |subclass|
@@ -66,7 +101,12 @@ module ArtRest
             end
         end
 
-        @content   = nil
+        # Hide method from RestClient::Resource by default since they
+        # may make no sense on a concrete subclass.
+        private :get, :post, :put, :delete, :head, :patch
+
+        # This class' mime type
+        self.mime_type = MIME::Types['application/json']
 
         public
 
@@ -76,7 +116,7 @@ module ArtRest
             @content = content if content
         end
 
-        def base_url
+        def base_url 
             options[:base_url]
         end
 
@@ -99,7 +139,7 @@ module ArtRest
         def _content
             return @content if @content
             raw = get
-            @content = case self.mime_type
+            @content = case self.class.mime_type
                        when MIME::Types['application/json'] then JSON.parse(raw)
                        else raw
                        end

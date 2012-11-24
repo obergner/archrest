@@ -165,6 +165,8 @@ end
 
 class JsonResourceSample < ArtRest::Resource
 
+    self.mime_type = MIME::Types['application/json']
+
     class << self
 
         protected

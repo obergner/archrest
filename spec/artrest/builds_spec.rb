@@ -40,10 +40,22 @@ describe ArtRest::Builds do
             @resource_attributes = [:uri, :builds]
         end
 
-        it "should return a non-nil value" do
-            @resource_attributes.each do |attr|
-                value = @artbuilds.send(attr)
-                value.should_not be_nil
+        context "when no block given" do
+            it "should return a non-nil value" do
+                @resource_attributes.each do |attr|
+                    value = @artbuilds.send(attr)
+                    value.should_not be_nil
+                end
+            end
+        end
+
+        context "when block given" do
+            it "should yield a non-nil value to that block" do
+                @resource_attributes.each do |attr|
+                    @artbuilds.send(attr) do |value|
+                        value.should_not be_nil
+                    end
+                end
             end
         end
     end

@@ -17,9 +17,9 @@ end
 
 desc "Generate the rdoc"
 Rake::RDocTask.new do |rdoc|
-	files = ["README.rdoc", "LICENSE", "lib/**/*.rb"]
+	files = ["README.md", "LICENSE.txt", "lib/**/*.rb"]
 	rdoc.rdoc_files.add(files)
-	rdoc.main = "README.rdoc"
+	rdoc.main = "README.md"
 	rdoc.title = "ArtRest: Ruby Artifactory client"
 end
 
