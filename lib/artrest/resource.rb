@@ -22,7 +22,8 @@ module ArtRest
         def self.resource_attributes(*attrs)
             attrs.each do |attr|
                 define_method(attr) do
-                    content[attr.to_s]
+                    return content[attr.to_s] unless block_given?
+                    yield content[attr.to_s]
                 end
             end
         end
@@ -41,7 +42,9 @@ module ArtRest
             def create(resource_url, options, &block)
                 check_options(options)
                 @@subclasses.each do |subclass|
-                    return subclass.new(resource_url, options, &block) if subclass.respond_to?(:matches_path) and subclass.matches_path(relative_path(resource_url, options), options)
+                    return subclass.new(resource_url, options, &block) if
+                    subclass.respond_to?(:matches_path) and
+                        subclass.matches_path(relative_path(resource_url, options), options)
                 end
                 raise ArgumentError.new("Unsupported resource URL #{resource_url}")
             end

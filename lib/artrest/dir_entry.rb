@@ -37,7 +37,7 @@ module ArtRest
             def matches_path(path, options)
                 return false unless path =~ %r|^/api/storage/[a-zA-Z0-9_.+-]+/.+$|
                     content_hash = JSON.parse(RestClient::Resource.new([options[:base_url], path].join, options[:user], options[:password]).get)
-                return content_hash['children'].nil?
+                return content_hash['children']
             end
         end
 
