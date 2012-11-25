@@ -18,11 +18,63 @@ require 'artrest/buildnumber'
 
 module ArtRest
 
-    def self.system_info(base_url, options)
-        System.get(base_url, options)
+    class << self
+        attr_accessor :options
     end
 
-    def self.all_builds(base_url, options)
-        Builds.get(base_url, options)
+    # Cache supplied +base_url+, +username+ and +password+ prior to using this
+    # API.
+    #
+    # * *Args*    :
+    #   - +base_url+ -> Our Artifactory server's URL, typically
+    #     http://localhost:8081/artifactory
+    #   - +username+ -> Username used when connecting to Artifactory
+    #   - +password+ -> Password used when connecting to Artifactory
+    #   - +options+ -> Additional connections parameters, currently unused
+    # * *Raises* :
+    #   - +ArgumentError+ -> If one of the parameters is +nil+
+    #
+    def self.connect(base_url, user, password, options = {})
+        raise ArgumentError.new "Must pass base_url" unless base_url
+        raise ArgumentError.new "Must pass user" unless user
+        raise ArgumentError.new "Must pass password" unless password
+        self.options = {
+            :base_url => base_url,
+            :user     => user,
+            :password => password
+        }
+        self.options.merge!(options)
+    end
+
+    # Return *the* ArtRest::System resource.
+    #
+    # * *Returns* :
+    #   - *The* ArtRest::System resource
+    # * *Raises* :
+    #   - +RuntimeException+ -> If you didn't call ::connect prior to calling
+    #     this method
+    #
+    def self.system
+        self.check_connected
+        System.get(self.options[:base_url], self.options)
+    end
+
+    # Return *the* ArtRest::Builds resource.
+    #
+    # * *Returns* :
+    #   - *The* ArtRest::Builds resource
+    # * *Raises* :
+    #   - +RuntimeException+ -> If you didn't call ::connect prior to calling
+    #     this method
+    #
+    def self.builds
+        self.check_connected
+        Builds.get(self.options[:base_url], self.options)
+    end
+
+    private
+
+    def self.check_connected
+        raise RuntimeError, "You need to call ArtRest::connect prior to using this API" unless self.options
     end
 end
