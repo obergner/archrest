@@ -75,9 +75,9 @@ end
 
 def to_options_hash global_options
     {
-        :artifactory_url      => global_options[:h],
-        :artifactory_user     => global_options[:u],
-        :artifactory_password => global_options[:p]
+        :url      => global_options[:h],
+        :user     => global_options[:u],
+        :password => global_options[:p]
     }
 end
 

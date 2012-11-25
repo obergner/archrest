@@ -1,6 +1,8 @@
 
 module ArtRest
 
+    # Abstract base class for all Artifactory resources.
+    #
     class Resource < RestClient::Resource
 
         class << self
@@ -68,11 +70,12 @@ module ArtRest
             #
             # * *Args*    :
             #   - +resource_url+ -> URL of the resource to create [required]
-            #   - +options+      -> Options hash holding base_url, user and password [required]
+            #   - +options+      -> Options hash holding base_url, user and
+            #     password [required]
             #   - +block+        -> Passed on to <tt>RestClient::Resource.initialize</tt> [optional]
             # * *Returns* :
             #   - An instance of a concrete ArtRest::Resource subclass appropriate
-            #     supplied +resource_url+
+            #     for the supplied +resource_url+
             #
             def create(resource_url, options, &block)
                 check_options(options)
@@ -84,7 +87,7 @@ module ArtRest
                 raise ArgumentError.new("Unsupported resource URL #{resource_url}")
             end
 
-            def check_options(options)
+            def check_options(options) # :nodoc:
                 raise ArgumentError, "Must pass :base_url" unless options[:base_url]
                 raise ArgumentError, "Must pass :user" unless options[:user]
                 raise ArgumentError, "Must pass :password" unless options[:password]
@@ -92,7 +95,7 @@ module ArtRest
 
             protected
 
-            def relative_path(resource_url, options)
+            def relative_path(resource_url, options) # :nodoc:
                 check_options(options)
                 base_path     = Addressable::URI.parse(options[:base_url]).path
                 resource_path = Addressable::URI.parse(resource_url).path
@@ -110,33 +113,94 @@ module ArtRest
 
         public
 
+        # Create a new ArtRest::Resource instance, representing the Artifactory
+        # resource located at +resource_url+. Use username and password
+        # contained in +options+ to authenticate against the Artifactory server.
+        # Optionally take and cache the parsed +content+ of the resource pointed
+        # to by +resource_url+ in case the caller has already accessed that
+        # resource. A +block+, if given, will transparently be passed on to
+        # RestClient::Resource's - our ancestor's - constructor.
+        #
+        # * *Args*    :
+        #   - +resource_url+ -> URL of the Artifactory resource
+        #   - +options+ -> A hash containing our Artifactory server's base url,
+        #     and a username and a password to authenticate against that server
+        #   - +content+ -> The *parsed* content of the resource, if the caller
+        #     has already accessed that resource [optional]
+        #   - +block+ -> A block that will be passed on to
+        #     RestClient::Resource#initialize [optional]
+        #
         def initialize(resource_url, options, content = nil, &block)
             self.class.check_options(options)
             super(resource_url, options, &block)
             @content = content if content
         end
 
+        # Return our Artifactory server's <em>base url</em>.
+        #
+        # === Example
+        #
+        #    http://localhost:8081/artifactory
+        #
         def base_url 
             options[:base_url]
         end
 
-        def content
+        # Return this resource's *parsed* content. In almost all cases this will
+        # be a Hash representing this resource's JSON content. The only
+        # exception is ArtRest::System, where the content is a plain text
+        # representation and thus returned as a String.
+        #
+        # If called with a +block+, yield this resource's parsed content to that
+        # block.
+        #
+        # * *Args*    :
+        #   - +block+ -> A block to yield this resource's parsed content to [optional]
+        # * *Returns* :
+        #   - This resource's *parsed* content, most often a Hash, in the case of
+        #     ArtRest::System a String
+        #
+        def content # :yields: content
             return _content unless block_given?
             yield _content
         end
 
-        def [](suburl, &new_block)
+        # Look up and return the ArtRest::Resource instance that is located at
+        # +relative_path+ relative to this resource. Take care to return the
+        # appropriate ArtRest::Resource subtype.
+        #
+        # === Example
+        #
+        # Given
+        #   
+        #   repository = ArtRest::Repository.new('http://localhost:8081/artifactory/api/storage/libs-release-local', { ... })
+        #
+        # the expression
+        #
+        #   folder = repository['/commons-lang/commons-lang/3.2.0']
+        #
+        # will return an ArtRest::Folder instance.
+        #
+        # * *Args*    :
+        #   - +relative_path+ -> The path of the resource to look up, relative to
+        #     this resource
+        #   - +block+ -> A block that will be transparently passed on to RestClient::Resource#initialize [optional]
+        # * *Returns* :
+        #   - An ArtRest::Resource instance of appropriate type representing the
+        #     Artifactory resource located at +relative_path+ relative to this resource
+        #
+        def [](relative_path, &new_block)
             case
-            when block_given? then ArtRest::Resource.create(concat_urls(url, suburl), options, &new_block)
-            when block        then ArtRest::Resource.create(concat_urls(url, suburl), options, &block)
+            when block_given? then ArtRest::Resource.create(concat_urls(url, relative_path), options, &new_block)
+            when block        then ArtRest::Resource.create(concat_urls(url, relative_path), options, &block)
             else
-                ArtRest::Resource.create(concat_urls(url, suburl), options)
+                ArtRest::Resource.create(concat_urls(url, relative_path), options)
             end
         end
 
         private
 
-        def _content
+        def _content # :nodoc:
             return @content if @content
             raw = get
             @content = case self.class.mime_type

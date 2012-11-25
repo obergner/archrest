@@ -19,7 +19,7 @@ require 'artrest/buildnumber'
 module ArtRest
 
     def self.system_info(base_url, options)
-        System.info(base_url, options)
+        System.get(base_url, options)
     end
 
     def self.all_builds(base_url, options)

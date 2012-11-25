@@ -8,9 +8,9 @@ describe ArtRest::System do
         register_stub_request('./system/system_response.txt', "api/system")
     end
 
-    describe "::info" do
+    describe "::get" do
         it "should allow a shortcut to access system info" do
-            system_info = ArtRest::System.info(ARTIFACTORY_URL, OPTIONS)
+            system_info = ArtRest::System.get(ARTIFACTORY_URL, OPTIONS)
             system_info.should_not be_nil
             system_info.should be_an_instance_of String
         end

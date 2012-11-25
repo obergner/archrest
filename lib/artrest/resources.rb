@@ -2,7 +2,8 @@
 module ArtRest
 
     # An ArtRest::Resource that doubles as a collection of resources, each such
-    # resource being an ArtRest::Resource instance. 
+    # resource being an ArtRest::Resource instance. This is an abstract base
+    # class that is *not* meant to be instantiated.
     #
     # === Example
     #
@@ -25,8 +26,8 @@ module ArtRest
             #
             # * *Args*    :
             #   - +block+ -> A +block+ taking a parsed JSON hash and an +options+
-            # hash and returning an array of appropriate ArtRest::Resource
-            # instances
+            #     hash and returning an array of appropriate ArtRest::Resource
+            #     instances
             #
             def resources_creator=(block)
                 self.singleton_class.class_eval do
@@ -44,9 +45,9 @@ module ArtRest
         #
         # * *Args*    :
         #   - +block+ -> The +block+ to yield each contained ArtRest::Resource
-        #   instance to
+        #     instance to
         #
-        def each &block
+        def each &block # :yields: content, options
             self.class.resources_creator.call(content, options).each &block 
         end
     end

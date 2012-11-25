@@ -42,23 +42,4 @@ describe ArtRest::Buildnumber do
             end
         end
     end
-
-    describe "#build_info" do
-        context "no block given" do
-            it "should return buildInfo as hash" do
-                build_info = @artbuildnumber.build_info
-                build_info.should_not be_nil
-                build_info.should be_an_instance_of Hash
-            end
-        end
-
-        context "block given" do
-            it "should yield buildInfo to block" do
-                @artbuildnumber.build_info do |build_info|
-                    build_info.should_not be_nil
-                    build_info.should be_an_instance_of Hash
-                end
-            end
-        end
-    end
 end
