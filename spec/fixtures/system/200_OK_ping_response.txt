@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Server: Artifactory/2.4.2
+Content-Type: text/plain
+Transfer-Encoding: chunked
+Date: Mon, 26 Nov 2012 01:21:49 GMT
+
+OK

@@ -106,7 +106,7 @@ module ArtRest
 
         # Hide method from RestClient::Resource by default since they
         # may make no sense on a concrete subclass.
-        private :get, :post, :put, :delete, :head, :patch
+        protected :get, :post, :put, :delete, :head, :patch
 
         # This class' mime type
         self.mime_type = MIME::Types['application/json']
@@ -157,12 +157,35 @@ module ArtRest
         # * *Args*    :
         #   - +block+ -> A block to yield this resource's parsed content to [optional]
         # * *Returns* :
-        #   - This resource's *parsed* content, most often a Hash, in the case of
-        #     ArtRest::System a String
+        #   - If called *without* a block, this resource's *parsed* content, most
+        #     often a +Hash+, otherwise a +String+.
+        #     If called *with* a block, +self+
         #
         def content # :yields: content
             return _content unless block_given?
+            # If our block returns a value, this will become this resource's new
+            # content
             yield _content
+            self
+        end
+
+        # Yield this resource's parsed content to +block+. If block returns a value,
+        # accept this value as this resource's new content. Calling this method
+        # is therefore a potentially destructive operation.
+        #
+        # Also see #content.
+        #
+        # * *Args*    :
+        #   - +block+ -> A block to yield this resource's parsed content to
+        # * *Returns* :
+        #   - +self+
+        #
+        def content! &block # :yields: content
+            # If our block returns a value, this will become this resource's new
+            # content
+            new_content = yield _content
+            @content = new_content if new_content
+            self
         end
 
         # Look up and return the ArtRest::Resource instance that is located at

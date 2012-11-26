@@ -10,7 +10,7 @@ describe ArtRest do
     describe "::system" do
         it "should allow a shortcut access to system info" do
             system_info = ArtRest.system
-            system_info.should be_an_instance_of String
+            system_info.should be_an_instance_of ArtRest::System
         end
     end
 end

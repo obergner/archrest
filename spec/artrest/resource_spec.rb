@@ -7,6 +7,9 @@ describe ArtRest::Resource do
             @system_url = "#{ARTIFACTORY_URL}/api/system"
             register_stub_request('./resource/system_response.txt', "api/system")
 
+            @system_config_url = "#{ARTIFACTORY_URL}/api/system/configuration"
+            register_stub_request('./resource/system_general_configuration_response.txt', "api/system/configuration")
+
             @builds_url = "#{ARTIFACTORY_URL}/api/build"
             register_stub_request('./resource/builds_response.txt', "api/build")
 
@@ -35,6 +38,13 @@ describe ArtRest::Resource do
             it "should create an ArtRest::System instance" do
                 instance = ArtRest::Resource.create("#{@system_url}?foo=bar", OPTIONS)
                 instance.should be_an_instance_of ArtRest::System
+            end
+        end
+
+        context "given a system general configuration resource URL" do
+            it "should create an ArtRest::System::GeneralConfiguration instance" do
+                instance = ArtRest::Resource.create("#{@system_config_url}?foo=bar", OPTIONS)
+                instance.should be_an_instance_of ArtRest::System::GeneralConfiguration
             end
         end
 
@@ -111,7 +121,6 @@ describe ArtRest::Resource do
         context "when dealing with plain text content" do
             it "should return content as string" do
                 content = @string_res.content
-                content.should_not be_nil
                 content.should be_an_instance_of String
             end
         end
@@ -119,7 +128,6 @@ describe ArtRest::Resource do
         context "when dealing with json content" do
             it "should return content as ruby hash" do
                 content = @json_res.content
-                content.should_not be_nil
                 content.should be_an_instance_of Hash
             end
         end
@@ -127,13 +135,51 @@ describe ArtRest::Resource do
         context "when passing in a block" do
             it "should pass content on to a given block" do
                 @string_res.content do |content|
-                    content.should_not be_nil
                     content.should be_an_instance_of String
                 end
+            end
+
+            it "should return self" do
+                return_value = @string_res.content do |content|
+                    # Intentionally left blank
+                end
+                return_value.should be @string_res
             end
         end
     end
 
+    describe "#content!" do
+        before(:each) do
+            @string_url = "#{ARTIFACTORY_URL}/api/string"
+            @string_res  = StringResourceSample.new(@string_url, OPTIONS)
+            register_stub_request('./resource/string_response.txt', "api/string")
+        end
+
+        context "when passing in a block" do
+            it "should pass content on to a given block" do
+                @string_res.content! do |content|
+                    content.should be_an_instance_of String
+                end
+            end
+
+            it "should return self" do
+                return_value = @string_res.content! do |content|
+                    # Intentionally left blank
+                end
+                return_value.should be @string_res
+            end
+        end
+
+        context "when passing in a block returning a value" do
+            it "should accept that value as our resource's new content" do
+                new_value = "NEW"
+                @string_res.content! do |content|
+                    new_value
+                end
+                @string_res.content.should eq new_value
+            end
+        end
+    end
     describe "#[]" do
         before(:each) do
             @json_url = "#{ARTIFACTORY_URL}/api/json"

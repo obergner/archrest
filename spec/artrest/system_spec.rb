@@ -11,15 +11,27 @@ describe ArtRest::System do
     describe "::get" do
         it "should allow a shortcut to access system info" do
             system_info = ArtRest::System.get(ARTIFACTORY_URL, OPTIONS)
-            system_info.should_not be_nil
-            system_info.should be_an_instance_of String
+            system_info.should be_an_instance_of ArtRest::System
         end
     end
 
     describe "#to_s" do
         it "should output system info as text" do
-            @artsys.to_s.should_not be_nil
             @artsys.to_s.should be_an_instance_of String
+        end
+    end
+
+    describe "#ping" do
+
+        context "when server is healthy" do
+            before(:each) do
+                register_stub_request('./system/200_OK_ping_response.txt', "api/system/ping")
+            end
+
+            it "should return response carrying HTTP code 200" do
+                ping_response = @artsys.ping
+                ping_response.code.should eq 200
+            end
         end
     end
 end
