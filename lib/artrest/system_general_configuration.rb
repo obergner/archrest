@@ -31,8 +31,6 @@ module ArtRest
                     System::GeneralConfiguration.new("#{base_url}/api/system/configuration", options)
                 end
 
-                protected
-
                 def matches_path(path, options) # :nodoc:
                     path =~ %r|^/api/system/configuration/?$|
                 end
@@ -40,6 +38,15 @@ module ArtRest
 
             self.mime_type = MIME::Types['application/xml']
 
+            # 
+            #
+            # * *Args*    :
+            #   - ++ ->
+            # * *Returns* :
+            #   -
+            # * *Raises* :
+            #   - ++ ->
+            #
             def update!(payload, additional_headers = {}, &block)
                 post(payload, additional_headers, &block)
             end

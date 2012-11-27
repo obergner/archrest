@@ -25,7 +25,6 @@ module ArtRest
         include ArtRest::DirEntry
 
         class << self
-            protected
 
             def matches_path(path, options) # :nodoc:
                 return false unless path =~ %r|^/api/storage/[a-zA-Z0-9_.+-]+/.+$|
@@ -79,7 +78,6 @@ module ArtRest
         include ArtRest::DirEntry
 
         class << self
-            protected
 
             def matches_path(path, options) # :nodoc:
                 return false unless path =~ %r|^/api/storage/[a-zA-Z0-9_.+-]+/.+$|

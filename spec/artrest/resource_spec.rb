@@ -148,6 +148,46 @@ describe ArtRest::Resource do
         end
     end
 
+    describe "#content=" do
+        before(:each) do
+            @string_url = "#{ARTIFACTORY_URL}/api/string"
+            @string_res  = StringResourceSample.new(@string_url, OPTIONS)
+            register_stub_request('./resource/string_response.txt', "api/string")
+
+            @json_url = "#{ARTIFACTORY_URL}/api/json"
+            @json_res  = JsonResourceSample.new(@json_url, OPTIONS)
+            register_stub_request('./resource/json_response.txt', "api/json")
+        end
+
+        context "when dealing with a string resource" do
+            it "should accept a string as is" do
+                new_content = "NEW"
+                @string_res.content = new_content
+                @string_res.content.should == new_content
+            end
+            
+            it "should convert a hash into a string" do
+                new_content = { :content => "NEW" }
+                @string_res.content = new_content
+                @string_res.content.should == new_content.to_s
+            end
+        end
+
+        context "when dealing with a json resource" do
+            it "should accept a hash as is" do
+                new_content = { :content => "NEW" }
+                @json_res.content = new_content
+                @json_res.content.should == new_content
+            end
+            
+            it "should accept an array as is" do
+                new_content = [ 1, 2, 3 ]
+                @json_res.content = new_content
+                @json_res.content.should == new_content
+            end
+        end
+    end
+
     describe "#content!" do
         before(:each) do
             @string_url = "#{ARTIFACTORY_URL}/api/string"
@@ -176,10 +216,46 @@ describe ArtRest::Resource do
                 @string_res.content! do |content|
                     new_value
                 end
-                @string_res.content.should eq new_value
+                @string_res.content.should == new_value
             end
         end
     end
+
+    describe "#unparsed_content" do
+        before(:each) do
+            class ArtRest::Resource
+                public :unparsed_content
+            end
+            @string_url = "#{ARTIFACTORY_URL}/api/string"
+            @string_res  = StringResourceSample.new(@string_url, OPTIONS)
+            register_stub_request('./resource/string_response.txt', "api/string")
+
+            @json_url = "#{ARTIFACTORY_URL}/api/json"
+            @json_res  = JsonResourceSample.new(@json_url, OPTIONS)
+            register_stub_request('./resource/json_response.txt', "api/json")
+        end
+
+        after(:each) do
+            class ArtRest::Resource
+                protected :unparsed_content
+            end
+        end
+
+        context "when dealing with plain text content" do
+            it "should return content as string" do
+                unparsed_content = @string_res.unparsed_content
+                unparsed_content.should be_an_instance_of String
+            end
+        end
+
+        context "when dealing with json content" do
+            it "should return content as string " do
+                unparsed_content = @json_res.unparsed_content
+                unparsed_content.should be_an_instance_of String
+            end
+        end
+    end
+
     describe "#[]" do
         before(:each) do
             @json_url = "#{ARTIFACTORY_URL}/api/json"
@@ -200,9 +276,6 @@ class StringResourceSample < ArtRest::Resource
     self.mime_type = MIME::Types['text/plain']
 
     class << self
-
-        protected
-
         def matches_path(path, options)
             path =~ /^\/api\/string$/
         end
@@ -214,9 +287,6 @@ class JsonResourceSample < ArtRest::Resource
     self.mime_type = MIME::Types['application/json']
 
     class << self
-
-        protected
-
         def matches_path(path, options)
             path =~ /^\/api\/json$/
         end
@@ -228,9 +298,6 @@ class SubResourceSample < ArtRest::Resource
     self.mime_type = MIME::Types['text/plain']
 
     class << self
-
-        protected
-
         def matches_path(path, options)
             path =~ /^\/api\/json\/sub.*/
         end

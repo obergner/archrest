@@ -12,7 +12,6 @@ module ArtRest
     class Build < ArtRest::Resources
 
         class << self
-            protected
 
             def matches_path(path, options) # :nodoc:
                 path =~ %r|^/api/build/[a-zA-Z+-._]+/?$|

@@ -28,8 +28,6 @@ module ArtRest
                 Repositories.new("#{base_url}/api/repositories", options)
             end
 
-            protected
-
             def matches_path(path, options) # :nodoc:
                 path =~ %r|^/api/repositories/?$|
             end

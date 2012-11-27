@@ -30,3 +30,9 @@ def register_stub_request(request_file_path, relative_uri, method = :get, auth =
     request_url.gsub!('http://', "http://#{ARTIFACTORY_USER}:#{ARTIFACTORY_PWD}@")
     stub_request(method, request_url).to_return req_file 
 end
+
+RSpec.configure do |config|
+    config.after(:each) do
+        WebMock.reset!
+    end
+end

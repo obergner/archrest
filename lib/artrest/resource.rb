@@ -104,10 +104,6 @@ module ArtRest
             end
         end
 
-        # Hide method from RestClient::Resource by default since they
-        # may make no sense on a concrete subclass.
-        protected :get, :post, :put, :delete, :head, :patch
-
         # This class' mime type
         self.mime_type = MIME::Types['application/json']
 
@@ -169,6 +165,50 @@ module ArtRest
             self
         end
 
+        # Set this resource's representation to +value+. Handle +value+ as
+        # appropriate for this resource's mime type:
+        #
+        # === application/json
+        #
+        # If we are dealing with a JSON resource - the most common case -
+        # +value+ may be one of
+        #
+        # * Hash|Array: will be accepted as is
+        # * String:     will interpreted as either a JSON hash or JSON array and
+        #   converted into a ruby Hash or Array, respectively
+        #
+        # Raise an +ArgumentError+ in all other cases.
+        #
+        # === text/plain or application/xml
+        #
+        # In this case, +value+ may be of any kind, but will be converted into a
+        # String via calling +value+.#to_s.
+        #
+        # * *Args*    :
+        #   - +value+ -> This resource's new content/representation. See above.
+        # * *Raises* :
+        #   - +ArgumentError+ -> If this resource's mime type is
+        #     +application/json+ and value is not one of Hash, Array and String
+        #
+        def content=(value)
+            if value.nil?
+                @content = nil
+                return
+            end
+            case self.class.mime_type
+            when MIME::Types['application/json'] then
+                if value.is_a? Hash or value.is_a? Array
+                    @content = value
+                elsif value.is_a? String
+                    @content = JSON.parse(value)
+                else
+                    raise ArgumentError, "Can only accept Hash|Array|String. Got: #{value.class}"
+                end
+            else
+                @content = value.to_s
+            end
+        end
+
         # Yield this resource's parsed content to +block+. If block returns a value,
         # accept this value as this resource's new content. Calling this method
         # is therefore a potentially destructive operation.
@@ -184,7 +224,7 @@ module ArtRest
             # If our block returns a value, this will become this resource's new
             # content
             new_content = yield _content
-            @content = new_content if new_content
+            self.content = new_content if new_content
             self
         end
 
@@ -219,6 +259,31 @@ module ArtRest
             else
                 ArtRest::Resource.create(concat_urls(url, relative_path), options)
             end
+        end
+
+        # Hide method from RestClient::Resource by default since they
+        # may make no sense on a concrete subclass.
+        protected :get, :post, :put, :delete, :head, :patch
+
+        protected
+
+        # Return this resource's *unparsed* content as a string[rdoc-ref:Kernel::String].
+        #
+        # Most of Artifactory's resources are represented in JSON, and these
+        # will be parsed into an equivalent ruby {hash}[rdoc-ref:Kernel::Hash] upon load. This
+        # method will *unparse* that hash back into a JSON string.
+        #
+        # In all other cases, when a resource's mime type is *not*
+        # 'application/json', that resource's representation will remain
+        # unchanged, i.e. will be stored as a string, and this method will
+        # return that string as is.
+        #
+        # * *Returns* :
+        #   - This resource's unparsed content, a {string}[rdoc-ref:Kernel::String]
+        #
+        def unparsed_content
+            return _content unless self.class.mime_type == MIME::Types['application/json']
+            JSON.generate(_content)
         end
 
         private

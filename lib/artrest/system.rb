@@ -29,8 +29,6 @@ module ArtRest
                 System.new("#{base_url}/api/system", options)
             end
 
-            protected
-
             def matches_path(path, options) # :nodoc:
                 path =~ %r|^/api/system/?$|
             end

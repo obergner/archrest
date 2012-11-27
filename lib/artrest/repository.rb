@@ -15,7 +15,6 @@ module ArtRest
     class Repository < ArtRest::Resources
 
         class << self
-            protected
 
             def matches_path(path, options) # :nodoc:
                 path =~ %r|^/api/storage/[a-zA-Z+-._]+/?$|
