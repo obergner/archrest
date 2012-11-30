@@ -165,7 +165,7 @@ describe ArtRest::Resource do
                 @string_res.content = new_content
                 @string_res.content.should == new_content
             end
-            
+
             it "should convert a hash into a string" do
                 new_content = { :content => "NEW" }
                 @string_res.content = new_content
@@ -179,11 +179,16 @@ describe ArtRest::Resource do
                 @json_res.content = new_content
                 @json_res.content.should == new_content
             end
-            
-            it "should accept an array as is" do
-                new_content = [ 1, 2, 3 ]
+
+            it "should parse a json hash into a ruby hash" do
+                new_content = "{ \"json\": 1 }"
                 @json_res.content = new_content
-                @json_res.content.should == new_content
+                @json_res.content.should == JSON.parse(new_content)
+            end
+
+            it "should reject content that is neither a ruby hash nor a json hash with an ArgumentError" do
+                new_content = MIME::Types['text/plain']
+                expect { @json_res.content = new_content }.to raise_error ArgumentError
             end
         end
     end

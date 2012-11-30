@@ -38,18 +38,8 @@ module ArtRest
 
             self.mime_type = MIME::Types['application/xml']
 
-            # 
-            #
-            # * *Args*    :
-            #   - ++ ->
-            # * *Returns* :
-            #   -
-            # * *Raises* :
-            #   - ++ ->
-            #
-            def update!(payload, additional_headers = {}, &block)
-                post(payload, additional_headers, &block)
-            end
+            # Make update! available on this class as it supports updates
+            public :update!, :update_with!
         end
     end
 end

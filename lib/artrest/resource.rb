@@ -69,10 +69,10 @@ module ArtRest
             # will return an ArtRest::System instance.
             #
             # * *Args*    :
-            #   - +resource_url+ -> URL of the resource to create [required]
-            #   - +options+      -> Options hash holding base_url, user and
-            #     password [required]
-            #   - +block+        -> Passed on to <tt>RestClient::Resource.initialize</tt> [optional]
+            #   [+resource_url+] URL of the resource to create [required]
+            #   [+options+]      Options hash holding base_url, user and
+            #                    password [required]
+            #   [+block+]        Passed on to <tt>RestClient::Resource.initialize</tt> [optional]
             # * *Returns* :
             #   - An instance of a concrete ArtRest::Resource subclass appropriate
             #     for the supplied +resource_url+
@@ -173,9 +173,9 @@ module ArtRest
         # If we are dealing with a JSON resource - the most common case -
         # +value+ may be one of
         #
-        # * Hash|Array: will be accepted as is
-        # * String:     will interpreted as either a JSON hash or JSON array and
-        #   converted into a ruby Hash or Array, respectively
+        # * Hash:   will be accepted as is
+        # * String: will be interpreted as a JSON encoded string and parsed into a
+        #   ruby Hash
         #
         # Raise an +ArgumentError+ in all other cases.
         #
@@ -188,7 +188,7 @@ module ArtRest
         #   - +value+ -> This resource's new content/representation. See above.
         # * *Raises* :
         #   - +ArgumentError+ -> If this resource's mime type is
-        #     +application/json+ and value is not one of Hash, Array and String
+        #     +application/json+ and value is neither a Hash nor a String
         #
         def content=(value)
             if value.nil?
@@ -197,12 +197,12 @@ module ArtRest
             end
             case self.class.mime_type
             when MIME::Types['application/json'] then
-                if value.is_a? Hash or value.is_a? Array
+                if value.is_a? Hash
                     @content = value
                 elsif value.is_a? String
                     @content = JSON.parse(value)
                 else
-                    raise ArgumentError, "Can only accept Hash|Array|String. Got: #{value.class}"
+                    raise ArgumentError, "Can only accept Hash and String. Got: #{value.class}"
                 end
             else
                 @content = value.to_s
@@ -267,10 +267,10 @@ module ArtRest
 
         protected
 
-        # Return this resource's *unparsed* content as a string[rdoc-ref:Kernel::String].
+        # Return this resource's *unparsed* content as a string[rdoc-ref:String].
         #
         # Most of Artifactory's resources are represented in JSON, and these
-        # will be parsed into an equivalent ruby {hash}[rdoc-ref:Kernel::Hash] upon load. This
+        # will be parsed into an equivalent ruby {hash}[rdoc-ref:Hash] upon load. This
         # method will *unparse* that hash back into a JSON string.
         #
         # In all other cases, when a resource's mime type is *not*
@@ -279,11 +279,51 @@ module ArtRest
         # return that string as is.
         #
         # * *Returns* :
-        #   - This resource's unparsed content, a {string}[rdoc-ref:Kernel::String]
+        #   - This resource's unparsed content, a {string}[rdoc-ref:String]
         #
         def unparsed_content
             return _content unless self.class.mime_type == MIME::Types['application/json']
             JSON.generate(_content)
+        end
+
+        # Post changes made to this resource's content/representation since
+        # loading it from Artifactory - if any - back to the server, i.e.
+        # *update* the resource this instance represents.
+        #
+        # === Example
+        #
+        #  sysConfig = ArtRest::System::GeneralConfiguration.get
+        #  sysConfig.content = ...
+        #  sysConfig.update!
+        #
+        # * *Args*    :
+        #   - +additional_headers+ -> Any additional headers to be set on the
+        #     POST request
+        #
+        def update!(additional_headers = {}, &block)
+            post(self.unparsed_content, additional_headers, &block)
+        end
+
+        # Take +content+ and make it this resource's new #content by calling
+        # #content= +content+. Subsequently, post this resource's changes back to
+        # Artifactory, i.e. *update* the resource this instance represents.
+        #
+        # Calling this method on a resource +res+ is therefore equivalent to
+        #
+        #  res.content = content
+        #  res.update!(additional_headers, &block)
+        #
+        # * *Args*    :
+        #  [+content+]            This resource's new #content
+        #  [+additional_headers+] Any additional headers to be set on this POST
+        #                         request that calling this method entails
+        #  [+block+]              A block that will be passed on to
+        #                         RestClient::Resource#post, i.e. it will handle
+        #                         the response to our POST request
+        #
+        def update_with!(content, additional_headers = {}, &block)
+            self.content = content
+            update!(additional_headers, &block)
         end
 
         private

@@ -64,15 +64,11 @@ module ArtRest
         # +artifactory.config.xml+ file.
         #
         # * *Returns* :
-        #   - 
+        #   - Artifactory's general configuration, represented as an instance of
+        #     ArtRest::System::GeneralConfiguration
         #
         def configuration
-            # Directly accessing the ping resource from this resource contravenes
-            # our design. For consistency reasons, we ought to explicitly model
-            # this ping resource as e.g. an instance of ArtRest::SystemPing.
-            # However, here we try to strike a balance between perfectionism
-            # and pragmatism and lean towards the latter.
-            RestClient::Resource.new("#{base_url}/api/system/ping", user, password).get
+            ArtRest::System::GeneralConfiguration.new("#{base_url}/api/system/configuration", options, block)
         end
     end
 end

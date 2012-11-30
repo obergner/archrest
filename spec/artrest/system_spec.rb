@@ -34,4 +34,17 @@ describe ArtRest::System do
             end
         end
     end
+
+    describe "#configuration" do
+
+        before(:each) do
+            @artsys_config_url = "#{ARTIFACTORY_URL}/api/system/configuration"
+            @artsys_config  = ArtRest::System::GeneralConfiguration.new(@artsys_config_url, OPTIONS)
+            register_stub_request('./system/general_configuration_response.txt', "api/system/configuration")
+        end
+
+        it "should return Artifactory's general configuration as an ArtRest::System::GeneralConfiguration instance" do
+            @artsys.configuration.should be_an_instance_of ArtRest::System::GeneralConfiguration
+        end
+    end
 end
