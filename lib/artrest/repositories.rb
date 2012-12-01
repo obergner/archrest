@@ -34,9 +34,28 @@ module ArtRest
         end
 
         self.mime_type = MIME::Types['application/json']
-        
+
         self.resources_creator = Proc.new do |content, options|
             content.map { |repo| ArtRest::Repository.new(repo['url'], options) }
+        end
+
+        # Look up and return the repository[rdoc-ref:ArtRest::Repository] named
+        # +repo_name+. Optionally yield that repository to a block provided a 
+        # block is given. 
+        #
+        # * *Args*    :
+        #  [+repo_name+] Name of the repository to return
+        # * *Returns* :
+        #   - The repository named +repo_name+, an ArtRest::Repository instance
+        # * *Raises* :
+        #  [+RestClient::ResourceNotFound+] If +repo_name+ does not point to an
+        #                                   existing repository
+        #
+        def repository(repo_name) # :yields: repository
+            repo_url = concat_urls(base_url, "/#{repo_name}/")
+            repo = ArtRest::Repository.new(repo_url, options, block)
+            yield repo if block_given?
+            repo
         end
     end
 end

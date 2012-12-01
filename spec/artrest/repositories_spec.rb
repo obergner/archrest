@@ -31,4 +31,17 @@ describe ArtRest::Repositories do
             end
         end
     end
+
+    describe "#repository" do
+
+        before(:each) do
+            @repo_name = 'libs-snapshot-local'
+            register_stub_request('./repositories/libs_snapshot_local_folder_response.txt', "api/storage/#{@repo_name}/")
+        end
+
+        it "should return requested repository as an ArtRest::Repository instance" do
+            repo = @artrepos.repository(@repo_name)
+            repo.should be_an_instance_of ArtRest::Repository
+        end
+    end
 end
