@@ -160,6 +160,8 @@ module ArtRest
         #   [+RestClient::ResourceNotFound+]  If the resource this instance
         #                                     represents does in fact not exist
         #                                     on the server
+        #   [+RestClient::Unauthorized+]      If accessing this resource is not
+        #                                     authorized
         #
         def content # :yields: content
             return _content unless block_given?
@@ -227,6 +229,8 @@ module ArtRest
         #   [+RestClient::ResourceNotFound+]  If the resource this instance
         #                                     represents does in fact not exist
         #                                     on the server
+        #   [+RestClient::Unauthorized+]      If accessing this resource is not
+        #                                     authorized
         #
         def content! &block # :yields: content
             # If our block returns a value, this will become this resource's new
@@ -293,6 +297,8 @@ module ArtRest
         #   [+RestClient::ResourceNotFound+]  If the resource this instance
         #                                     represents does in fact not exist
         #                                     on the server
+        #   [+RestClient::Unauthorized+]      If accessing this resource is not
+        #                                     authorized
         #
         def unparsed_content
             return _content unless self.class.mime_type == MIME::Types['application/json']
