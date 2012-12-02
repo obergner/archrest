@@ -146,6 +146,31 @@ describe ArtRest::Resource do
                 return_value.should be @string_res
             end
         end
+
+        context "given a non-existing resource URL" do
+            before(:each) do
+                @non_existing_res_url = "#{ARTIFACTORY_URL}/api/does-not-exist"
+                @non_existing_res     = JsonResourceSample.new(@non_existing_res_url, OPTIONS)
+                register_stub_request('./resource/repository_not_found_response.txt', "api/does-not-exist")
+            end
+
+            it "should raise RestClient::ResourceNotFound" do
+                expect { @non_existing_res.content }.to raise_error RestClient::ResourceNotFound
+            end
+        end
+
+        context "given invalid credentials" do
+            before(:each) do
+                @unauthorized_res_url = "#{ARTIFACTORY_URL}/api/unauthorized"
+                @invalid_options      = OPTIONS.merge({ :password => 'wrong' })
+                @unauthorized_res     = JsonResourceSample.new(@unauthorized_res_url, @invalid_options)
+                register_stub_request('./resource/repository_unauthorized_response.txt', "api/unauthorized", "wrong")
+            end
+
+            it "should raise RestClient::Unauthorized" do
+                expect { @unauthorized_res.content }.to raise_error RestClient::Unauthorized
+            end
+        end
     end
 
     describe "#content=" do
@@ -224,6 +249,31 @@ describe ArtRest::Resource do
                 @string_res.content.should == new_value
             end
         end
+
+        context "given a non-existing resource URL" do
+            before(:each) do
+                @non_existing_res_url = "#{ARTIFACTORY_URL}/api/does-not-exist"
+                @non_existing_res     = JsonResourceSample.new(@non_existing_res_url, OPTIONS)
+                register_stub_request('./resource/repository_not_found_response.txt', "api/does-not-exist")
+            end
+
+            it "should raise RestClient::ResourceNotFound" do
+                expect { @non_existing_res.content! { |content| } }.to raise_error RestClient::ResourceNotFound
+            end
+        end
+
+        context "given invalid credentials" do
+            before(:each) do
+                @unauthorized_res_url = "#{ARTIFACTORY_URL}/api/unauthorized"
+                @invalid_options      = OPTIONS.merge({ :password => 'wrong' })
+                @unauthorized_res     = JsonResourceSample.new(@unauthorized_res_url, @invalid_options)
+                register_stub_request('./resource/repository_unauthorized_response.txt', "api/unauthorized", "wrong")
+            end
+
+            it "should raise RestClient::Unauthorized" do
+                expect { @unauthorized_res.content! { |content| } }.to raise_error RestClient::Unauthorized
+            end
+        end
     end
 
     describe "#unparsed_content" do
@@ -257,6 +307,31 @@ describe ArtRest::Resource do
             it "should return content as string " do
                 unparsed_content = @json_res.unparsed_content
                 unparsed_content.should be_an_instance_of String
+            end
+        end
+
+        context "given a non-existing resource URL" do
+            before(:each) do
+                @non_existing_res_url = "#{ARTIFACTORY_URL}/api/does-not-exist"
+                @non_existing_res     = JsonResourceSample.new(@non_existing_res_url, OPTIONS)
+                register_stub_request('./resource/repository_not_found_response.txt', "api/does-not-exist")
+            end
+
+            it "should raise RestClient::ResourceNotFound" do
+                expect { @non_existing_res.unparsed_content }.to raise_error RestClient::ResourceNotFound
+            end
+        end
+
+        context "given invalid credentials" do
+            before(:each) do
+                @unauthorized_res_url = "#{ARTIFACTORY_URL}/api/unauthorized"
+                @invalid_options      = OPTIONS.merge({ :password => 'wrong' })
+                @unauthorized_res     = JsonResourceSample.new(@unauthorized_res_url, @invalid_options)
+                register_stub_request('./resource/repository_unauthorized_response.txt', "api/unauthorized", "wrong")
+            end
+
+            it "should raise RestClient::Unauthorized" do
+                expect { @unauthorized_res.unparsed_content }.to raise_error RestClient::Unauthorized
             end
         end
     end

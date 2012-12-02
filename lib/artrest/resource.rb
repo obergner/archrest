@@ -151,11 +151,15 @@ module ArtRest
         # block.
         #
         # * *Args*    :
-        #   - +block+ -> A block to yield this resource's parsed content to [optional]
+        #   [+block+] A block to yield this resource's parsed content to [optional]
         # * *Returns* :
         #   - If called *without* a block, this resource's *parsed* content, most
         #     often a +Hash+, otherwise a +String+.
         #     If called *with* a block, +self+
+        # * *Raises*  :
+        #   [+RestClient::ResourceNotFound+]  If the resource this instance
+        #                                     represents does in fact not exist
+        #                                     on the server
         #
         def content # :yields: content
             return _content unless block_given?
@@ -216,9 +220,13 @@ module ArtRest
         # Also see #content.
         #
         # * *Args*    :
-        #   - +block+ -> A block to yield this resource's parsed content to
+        #   [+block+]  A block to yield this resource's parsed content to
         # * *Returns* :
-        #   - +self+
+        #   - +self+ This instance
+        # * *Raises*  :
+        #   [+RestClient::ResourceNotFound+]  If the resource this instance
+        #                                     represents does in fact not exist
+        #                                     on the server
         #
         def content! &block # :yields: content
             # If our block returns a value, this will become this resource's new
@@ -245,9 +253,10 @@ module ArtRest
         # will return an ArtRest::Folder instance.
         #
         # * *Args*    :
-        #   - +relative_path+ -> The path of the resource to look up, relative to
-        #     this resource
-        #   - +block+ -> A block that will be transparently passed on to RestClient::Resource#initialize [optional]
+        #   [+relative_path+] The path of the resource to look up, relative to
+        #                     this resource
+        #   [+block+]         A block that will be transparently passed on to 
+        #                     RestClient::Resource#initialize [optional]
         # * *Returns* :
         #   - An ArtRest::Resource instance of appropriate type representing the
         #     Artifactory resource located at +relative_path+ relative to this resource
@@ -280,6 +289,10 @@ module ArtRest
         #
         # * *Returns* :
         #   - This resource's unparsed content, a {string}[rdoc-ref:String]
+        # * *Raises*  :
+        #   [+RestClient::ResourceNotFound+]  If the resource this instance
+        #                                     represents does in fact not exist
+        #                                     on the server
         #
         def unparsed_content
             return _content unless self.class.mime_type == MIME::Types['application/json']

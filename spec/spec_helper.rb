@@ -24,11 +24,11 @@ def load_stub_request(relative_path)
 end
 
 # Convenience function to easily register stub requests
-def register_stub_request(request_file_path, relative_uri, method = :get, auth = true)
+def register_stub_request(request_file_path, relative_uri, password = ARTIFACTORY_PWD)
     req_file = load_stub_request(request_file_path)
     request_url = "#{ARTIFACTORY_URL}/#{relative_uri}"
-    request_url.gsub!('http://', "http://#{ARTIFACTORY_USER}:#{ARTIFACTORY_PWD}@")
-    stub_request(method, request_url).to_return req_file 
+    request_url.gsub!('http://', "http://#{ARTIFACTORY_USER}:#{password}@")
+    stub_request(:get, request_url).to_return req_file 
 end
 
 RSpec.configure do |config|
