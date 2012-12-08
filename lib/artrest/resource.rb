@@ -19,10 +19,9 @@ module ArtRest
                 @@subclasses << subclass
             end
 
-            # When called with +value+ as argument define a
-            # singleton method +mime_type+ on the class this
-            # method is called on, where calling +mime_type+
-            # will return +value+.
+            # Define a singleton method +mime_type+ on the class this
+            # method is called on, where calling +mime_type+ will return
+            # +value+.
             #
             # This essentially emulates a "proper" class variable
             # +mime_type+.
@@ -171,6 +170,36 @@ module ArtRest
             self
         end
 
+        # Return this resource's *unparsed* content as a string[rdoc-ref:String].
+        #
+        # Most of Artifactory's resources are represented in JSON, and these
+        # will be parsed into an equivalent ruby {hash}[rdoc-ref:Hash] upon load. This
+        # method will *unparse* that hash back into a JSON string.
+        #
+        # In all other cases, when a resource's mime type is *not*
+        # 'application/json', that resource's representation will remain
+        # unchanged, i.e. will be stored as a string, and this method will
+        # return that string as is.
+        #
+        # * *Returns* :
+        #   - This resource's unparsed content, a {string}[rdoc-ref:String]
+        # * *Raises*  :
+        #   [+RestClient::ResourceNotFound+]  If the resource this instance
+        #                                     represents does in fact not exist
+        #                                     on the server
+        #   [+RestClient::Unauthorized+]      If accessing this resource is not
+        #                                     authorized
+        #
+        def unparsed_content(fmt = :plain)
+            return _content unless self.class.mime_type == MIME::Types['application/json']
+            case fmt
+            when :pretty then
+                JSON.pretty_generate(_content)
+            else
+                JSON.generate(_content)
+            end
+        end
+
         # Set this resource's representation to +value+. Handle +value+ as
         # appropriate for this resource's mime type:
         #
@@ -267,8 +296,10 @@ module ArtRest
         #
         def [](relative_path, &new_block)
             case
-            when block_given? then ArtRest::Resource.create(concat_urls(url, relative_path), options, &new_block)
-            when block        then ArtRest::Resource.create(concat_urls(url, relative_path), options, &block)
+            when block_given? then 
+                ArtRest::Resource.create(concat_urls(url, relative_path), options, &new_block)
+            when block        then 
+                ArtRest::Resource.create(concat_urls(url, relative_path), options, &block)
             else
                 ArtRest::Resource.create(concat_urls(url, relative_path), options)
             end
@@ -279,31 +310,6 @@ module ArtRest
         protected :get, :post, :put, :delete, :head, :patch
 
         protected
-
-        # Return this resource's *unparsed* content as a string[rdoc-ref:String].
-        #
-        # Most of Artifactory's resources are represented in JSON, and these
-        # will be parsed into an equivalent ruby {hash}[rdoc-ref:Hash] upon load. This
-        # method will *unparse* that hash back into a JSON string.
-        #
-        # In all other cases, when a resource's mime type is *not*
-        # 'application/json', that resource's representation will remain
-        # unchanged, i.e. will be stored as a string, and this method will
-        # return that string as is.
-        #
-        # * *Returns* :
-        #   - This resource's unparsed content, a {string}[rdoc-ref:String]
-        # * *Raises*  :
-        #   [+RestClient::ResourceNotFound+]  If the resource this instance
-        #                                     represents does in fact not exist
-        #                                     on the server
-        #   [+RestClient::Unauthorized+]      If accessing this resource is not
-        #                                     authorized
-        #
-        def unparsed_content
-            return _content unless self.class.mime_type == MIME::Types['application/json']
-            JSON.generate(_content)
-        end
 
         # Post changes made to this resource's content/representation since
         # loading it from Artifactory - if any - back to the server, i.e.

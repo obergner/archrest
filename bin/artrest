@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 require 'gli'
+require 'yaml'
+require 'active_support/core_ext/hash/keys'
 require 'artrest'
 
 include GLI::App
@@ -23,11 +25,19 @@ default_value 'password'
 arg_name 'Artifactory password'
 flag [:p,:password]
 
+desc 'Configuration file containing default values for all options'
+long_desc 'Path to a configuration file containing default values for all global options that may be passed on the command line.
+
+It is intended that global options passed on the command line overwrite corresponding options defined in this configuration file.
+This feature is NOT YET IMPLEMENTED!'
+default_value File.join(ENV['HOME'], '.artrest.yml')
+arg_name 'Configuration file'
+flag [:c, :config]
+
 desc 'Print Artifactory\'s current configuration'
 command :system do |c|
     c.action do |global_options,options,args|
-        config = to_options_hash global_options
-        puts ArtRest.system config
+        puts ArtRest.system.unparsed_content.to_s
     end
 end
 
@@ -36,9 +46,12 @@ command :builds do |c|
 
     c.desc 'Print a list of all builds'
     c.command :all do |all|
+
+        all.desc 'Pretty print output'
+        all.switch [:p, :pretty]
+
         all.action do |global_options,options,args|
-            config = to_options_hash global_options
-            puts ArtRest.builds(config).to_s
+            puts ArtRest.builds.unparsed_content(options[:pretty] ? :pretty : :plain).to_s
         end
     end
 end
@@ -56,7 +69,14 @@ pre do |global,command,options,args|
     # chosen command
     # Use skips_pre before a command to skip this block
     # on that command only
+    config = load_config_file(global[:config])
+    global.merge!(config)
     ArtRest.connect(global[:host], global[:user], global[:password])
+end
+
+def load_config_file(filename)
+    return {} unless File.exist?(filename)
+    YAML.load_file(filename).symbolize_keys
 end
 
 post do |global,command,options,args|
@@ -68,6 +88,8 @@ end
 on_error do |exception|
     # Error logic here
     # return false to skip default error handling
+    puts exception.inspect
+    puts exception.backtrace
     true
 end
 
