@@ -111,19 +111,57 @@ end
 desc 'Print information about builds to stdout'
 command :builds do |c|
 
-    c.desc 'Print a list of all builds to stdout'
-    
-    c.command :all do |all|
+    c.desc 'Pretty print output in a format fit to be parsed by mere humans'
+    c.switch [:p, :pretty]
 
-        all.desc 'Pretty print output in a format fit to be parsed by mere humans'
-        all.switch [:p, :pretty]
+    c.desc 'Print a list of all builds to stdout'
+
+    c.command :all do |all|
 
         all.action do |global_options,options,args|
             puts ArtRest.builds.unparsed_content(options[:pretty] ? :pretty : :plain).to_s
         end
     end
+
+    c.desc 'Name of build to retrieve'
+    c.arg_name 'build'
+
+    c.desc 'Print information on named build to stdout'
+
+    c.command :get do |get|
+
+        get.action do |global_options,options,args|
+            help_now!('name of build to retrieve is required') if args.empty?
+            puts ArtRest.builds[args[0]].unparsed_content(options[:pretty] ? :pretty : :plain).to_s
+        end
+    end
+
+    c.default_command :all
 end
 
+#
+# Artifactory's buildnumber API
+#
+desc 'Print information about buildnumbers to stdout'
+command :buildnumber do |c|
+
+    c.desc 'Pretty print output in a format fit to be parsed by mere humans'
+    c.switch [:p, :pretty]
+
+    c.desc 'Name of build to retrieve'
+    c.arg_name 'build'
+
+    c.desc 'Number of build to retrieve'
+    c.arg_name 'buildnumber'
+
+    c.desc 'Print information on named build/buildnumber to stdout'
+
+    c.action do |global_options,options,args|
+        help_now!('name of buildnumber to retrieve is required') if args[0].nil?
+        help_now!('number of buildnumber to retrieve is required') if args[1].nil?
+        puts ArtRest.builds[args[0]][args[1]].unparsed_content(options[:pretty] ? :pretty : :plain).to_s
+    end
+end
 #
 # Artifactory's repositories API
 #
@@ -149,14 +187,6 @@ on_error do |exception|
     # return false to skip default error handling
     true
 end
-
-#def to_options_hash global_options
-#    {
-#        :base_url => global_options[:h],
-#        :user     => global_options[:u],
-#        :password => global_options[:p]
-#    }
-#end
 
 #
 # Main
